@@ -583,17 +583,96 @@ function saveModal(safeEx, numSets) {
 function closeModal() { g("overlay").classList.remove("open"); }
 function overlayClick(e) { if (e.target === g("overlay")) closeModal(); }
 
+var MW_LINKS = {
+  "Barbell Hip Thrust": "barbell-hip-thrust",
+  "Smith Machine RDL": "smith-machine-romanian-deadlift",
+  "DB Bulgarian Split Squat": "dumbbell-bulgarian-split-squat",
+  "Cable Kickback": "cable-standing-glute-kickback",
+  "Abduction Machine": "machine-hip-abduction",
+  "Leg Curl": "machine-lying-leg-curl",
+  "Glute Bridge Pulse": "glute-bridge",
+  "Smith Machine Hip Thrust": "smith-machine-hip-thrust",
+  "Back Extension": "machine-45-degree-back-extension",
+  "Sumo Deadlift": "barbell-sumo-deadlift",
+  "Copenhagen Plank": "copenhagen-plank",
+  "Dead Bug": "dead-bug",
+  "Cable Pull Through": "cable-pull-through",
+  "Pallof Press": "cable-pallof-press",
+  "Lat Pulldown": "machine-pulldown",
+  "Seated Cable Row": "machine-seated-cable-row",
+  "DB Shoulder Press": "dumbbell-shoulder-press",
+  "Cable Lateral Raise": "cable-low-bilateral-lateral-raise",
+  "Incline DB Press": "incline-dumbbell-press",
+  "Tricep Rope Pushdown": "cable-rope-pushdown",
+  "Face Pulls": "machine-face-pulls",
+  "Hip Thrust Machine": "machine-hip-thrust",
+  "Curtsy Lunge": "curtsy-lunge",
+  "Cable Abduction": "cable-hip-abduction",
+  "Seated Abduction Machine": "machine-hip-abduction",
+  "Reverse Hyperextension": "reverse-hyperextension",
+  "Banded Clamshell": "clamshell",
+  "Donkey Kick Cable": "cable-standing-glute-kickback",
+};
+var YT_LINKS = {
+  "Barbell Hip Thrust": "barbell hip thrust tutorial",
+  "Smith Machine RDL": "Smith machine RDL Romanian deadlift form",
+  "DB Bulgarian Split Squat": "dumbbell Bulgarian split squat tutorial",
+  "Cable Kickback": "cable glute kickback tutorial",
+  "Abduction Machine": "hip abduction machine glute medius tutorial",
+  "Leg Curl": "lying leg curl tutorial form",
+  "Glute Bridge Pulse": "glute bridge pulse exercise",
+  "Smith Machine Hip Thrust": "Smith machine hip thrust tutorial",
+  "Back Extension": "back extension glute focus tutorial",
+  "Sumo Deadlift": "sumo deadlift glutes tutorial",
+  "Copenhagen Plank": "Copenhagen plank tutorial",
+  "Dead Bug": "dead bug core exercise tutorial",
+  "Cable Pull Through": "cable pull through glute tutorial",
+  "Pallof Press": "Pallof press core anti rotation tutorial",
+  "Lat Pulldown": "lat pulldown proper form tutorial",
+  "Seated Cable Row": "seated cable row back exercise form",
+  "DB Shoulder Press": "dumbbell shoulder press tutorial",
+  "Cable Lateral Raise": "cable lateral raise shoulder tutorial",
+  "Incline DB Press": "incline dumbbell press chest tutorial",
+  "Tricep Rope Pushdown": "tricep rope pushdown cable tutorial",
+  "Face Pulls": "face pulls cable rear delt tutorial",
+  "Hip Thrust Machine": "hip thrust machine tutorial",
+  "Curtsy Lunge": "curtsy lunge glute medius tutorial",
+  "Cable Abduction": "cable hip abduction glute medius tutorial",
+  "Seated Abduction Machine": "seated hip abduction machine hip dips",
+  "Reverse Hyperextension": "reverse hyperextension glute tutorial",
+  "Banded Clamshell": "banded clamshell hip abductor tutorial",
+  "Donkey Kick Cable": "cable donkey kick glute tutorial",
+};
+
 function showExInfo(safeEx) {
   var ex = decodeURIComponent(safeEx);
   var info = EX_INFO[ex];
   var popup = g("ex-info-popup");
+  var mwSlug = MW_LINKS[ex] || "";
+  var ytQuery = YT_LINKS[ex] || (ex + " exercise tutorial");
+  var mwUrl = mwSlug ? "https://musclewiki.com/exercise/" + mwSlug : "";
+  var ytUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(ytQuery);
+
+  var linkBtns = '<div style="display:flex;gap:8px;margin-bottom:16px">';
+  if (mwUrl) {
+    linkBtns += '<a href="' + mwUrl + '" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 8px;background:rgba(255,110,180,0.1);border:1px solid rgba(255,110,180,0.3);border-radius:9px;text-decoration:none;color:var(--accent);font-size:12px;font-weight:600;font-family:DM Sans,sans-serif">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+      'Muscle Wiki</a>';
+  }
+  linkBtns += '<a href="' + ytUrl + '" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 8px;background:rgba(255,60,60,0.1);border:1px solid rgba(255,60,60,0.3);border-radius:9px;text-decoration:none;color:#ff6060;font-size:12px;font-weight:600;font-family:DM Sans,sans-serif">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.1 2.8 12 2.8 12 2.8s-4.1 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v1.9C.7 15.3 1 17.3 1 17.3s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.6 21.5 12 21.5 12 21.5s4.1 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-1.9C23.3 9.1 23 7 23 7zM9.7 14.9V8.6l6.5 3.2-6.5 3.1z"/></svg>' +
+    'YouTube</a>';
+  linkBtns += '</div>';
+
   if (!info) {
-    popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body"><div class="ex-info-name">' + ex + '</div><div class="ex-info-text" style="margin-top:12px">No description available.</div></div>';
+    popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body"><div class="ex-info-name">' + ex + '</div><div style="height:10px"></div>' + linkBtns + '</div>';
   } else {
     var tips = info.tips.map(function(t){ return "<li>" + t + "</li>"; }).join("");
     popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body">' +
       '<div class="ex-info-name">' + ex + '</div>' +
       '<div class="ex-info-muscle">' + info.muscle + '</div>' +
+      '<div style="height:12px"></div>' +
+      linkBtns +
       '<div class="ex-info-section"><div class="ex-info-section-title">Execution</div><div class="ex-info-text">' + info.exec + '</div></div>' +
       '<div class="ex-info-section"><div class="ex-info-section-title">Key Tips</div><ul class="ex-info-tips">' + tips + '</ul></div>' +
       '</div><div style="height:20px"></div>';
