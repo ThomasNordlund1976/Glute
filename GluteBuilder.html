@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GluteBuilder">
+<meta name="theme-color" content="#0d0a0e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>GluteBuilder</title>
+<style>
+:root {
+  --bg: #0d0a0e;
+  --bg2: #130f14;
+  --bg3: #1a141c;
+  --surface: #201a22;
+  --surface2: #27202a;
+  --border: #332a36;
+  --border2: #3d3342;
+  --accent: #ff6eb4;
+  --accent2: #c84b8a;
+  --accent-dim: rgba(255,110,180,0.12);
+  --accent-dim2: rgba(255,110,180,0.06);
+  --gold: #f0c060;
+  --text: #f5f0f6;
+  --text2: #a090a8;
+  --text3: #5a4d60;
+  --glute: #ff6eb4;
+  --core: #f0c060;
+  --upper: #80c8ff;
+  --pump: #b088ff;
+  --rest: #3d3342;
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', -apple-system, sans-serif; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+#app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+.view { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 80px; }
+.hidden { display: none; }
+
+/* NAV */
+nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg2); border-top: 1px solid var(--border); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px; background: none; border: none; color: var(--text3); font-family: 'DM Sans', -apple-system, sans-serif; font-size: 10px; font-weight: 500; cursor: pointer; }
+.nav-btn svg { width: 22px; height: 22px; }
+.nav-btn.active { color: var(--accent); }
+
+/* HEADER */
+.page-header { padding: 20px 20px 14px; padding-top: calc(20px + env(safe-area-inset-top)); position: sticky; top: 0; background: var(--bg); z-index: 50; border-bottom: 1px solid var(--border); }
+.page-header h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; line-height: 1.1; color: var(--text); }
+.page-header h1 span { color: var(--accent); }
+.page-header p { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 300; }
+
+/* WEEK STRIP */
+.week-strip { display: flex; gap: 8px; padding: 14px 20px; overflow-x: auto; scrollbar-width: none; }
+.week-strip::-webkit-scrollbar { display: none; }
+.wchip { flex-shrink: 0; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.wchip.active { background: var(--accent); color: #0d0a0e; border-color: var(--accent); font-weight: 700; }
+.wchip.peak { border-color: rgba(255,110,180,0.4); }
+
+/* WEEK BANNER */
+.week-banner { margin: 0 16px 12px; border-radius: var(--radius); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.wb-left { display: flex; flex-direction: column; gap: 2px; }
+.wb-phase { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+.wb-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.wb-stats { display: flex; gap: 14px; flex-shrink: 0; }
+.wb-stat { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.wb-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; line-height: 1; }
+.wb-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); font-family: 'DM Mono', monospace; }
+
+.p-build { background: rgba(255,110,180,0.08); border: 1px solid rgba(255,110,180,0.2); }
+.p-build .wb-phase, .p-build .wb-val { color: var(--accent); }
+.p-deload { background: rgba(240,192,96,0.07); border: 1px solid rgba(240,192,96,0.2); }
+.p-deload .wb-phase, .p-deload .wb-val { color: var(--gold); }
+.p-peak { background: rgba(176,136,255,0.08); border: 1px solid rgba(176,136,255,0.2); }
+.p-peak .wb-phase, .p-peak .wb-val { color: var(--pump); }
+
+/* COACH NOTE */
+.coach-note { margin: 0 16px 16px; padding: 12px 14px; background: var(--surface); border-radius: var(--radius-sm); border-left: 3px solid var(--accent); font-size: 12px; color: var(--text2); line-height: 1.65; font-weight: 300; }
+
+/* WEEK COMPLETE */
+.week-complete-bar { margin: 0 16px 12px; padding: 10px 14px; background: rgba(255,110,180,0.1); border: 1px solid rgba(255,110,180,0.3); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--accent); font-weight: 600; }
+
+/* DAY CARD */
+.day-section { margin: 0 16px 14px; }
+.day-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius) var(--radius) 0 0; border: 1px solid var(--border); border-bottom: none; }
+.day-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.day-day { font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; }
+.day-type { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; line-height: 1.1; flex: 1; }
+.day-sub { font-size: 10px; color: var(--text2); }
+
+.t-glute .day-type { color: var(--glute); } .t-glute .day-dot { background: var(--glute); } .t-glute .day-header { background: rgba(255,110,180,0.06); border-color: rgba(255,110,180,0.25); }
+.t-core  .day-type { color: var(--core);  } .t-core  .day-dot { background: var(--core);  } .t-core  .day-header { background: rgba(240,192,96,0.06);  border-color: rgba(240,192,96,0.25); }
+.t-upper .day-type { color: var(--upper); } .t-upper .day-dot { background: var(--upper); } .t-upper .day-header { background: rgba(128,200,255,0.06); border-color: rgba(128,200,255,0.25); }
+.t-pump  .day-type { color: var(--pump);  } .t-pump  .day-dot { background: var(--pump);  } .t-pump  .day-header { background: rgba(176,136,255,0.06); border-color: rgba(176,136,255,0.25); }
+.t-rest  .day-type { color: var(--rest);  } .t-rest  .day-dot { background: var(--rest);  } .t-rest  .day-header { background: var(--surface); border-color: var(--border); opacity: 0.5; }
+
+.ex-list { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; }
+.ex-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; gap: 10px; }
+.ex-row:last-child { border-bottom: none; }
+.ex-row:active { background: var(--surface2); }
+.ex-info { flex: 1; min-width: 0; }
+.ex-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ex-last { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
+.ex-last.has { color: var(--text2); }
+.ex-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ex-rx { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+.ex-bubble { width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text3); }
+.ex-bubble.done { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.rest-msg { padding: 14px; font-size: 12px; color: var(--text3); font-style: italic; }
+
+/* MODAL */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--bg2); border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
+.overlay.open .modal { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 0; }
+.modal-head { padding: 14px 20px 12px; border-bottom: 1px solid var(--border); }
+.modal-daytype { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; cursor: pointer; border-bottom: 1px dashed rgba(255,110,180,0.35); display: inline-block; padding-bottom: 2px; }
+.modal-title-hint { font-size: 14px; color: var(--accent); vertical-align: middle; }
+.modal-sub { font-size: 12px; color: var(--text2); margin-top: 6px; font-family: 'DM Mono', monospace; }
+.modal-hint { font-size: 11px; color: var(--text3); margin-top: 5px; font-family: 'DM Mono', monospace; }
+
+/* SET LOGGER */
+.set-logger { padding: 16px 20px; }
+.logger-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 12px; }
+.set-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.set-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); width: 36px; text-align: center; flex-shrink: 0; }
+.set-inputs { display: flex; gap: 8px; flex: 1; }
+.field-wrap { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.field-lbl { font-size: 9px; text-align: center; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+.set-input { width: 100%; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; text-align: center; padding: 10px 6px; outline: none; -webkit-appearance: none; appearance: none; }
+.set-input:focus { border-color: var(--accent); }
+input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type=number] { -moz-appearance: textfield; }
+.check-btn { width: 38px; height: 46px; border-radius: var(--radius-sm); border: 1.5px solid var(--border2); background: transparent; color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.check-btn.done { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+/* HISTORY */
+.history-sec { padding: 0 20px 16px; border-top: 1px solid var(--border); }
+.history-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; padding: 14px 0 10px; }
+.hist-entry { margin-bottom: 10px; }
+.hist-wk { font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+.hist-sets { display: flex; gap: 6px; flex-wrap: wrap; }
+.hist-set { padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); }
+.no-hist { font-size: 12px; color: var(--text3); font-style: italic; }
+
+/* MODAL ACTIONS */
+.modal-actions { padding: 8px 20px 0; display: flex; flex-direction: column; gap: 8px; }
+.btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; border-radius: var(--radius); border: none; font-family: 'DM Sans', -apple-system, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-primary { background: var(--accent); color: #0d0a0e; }
+.btn-ghost { background: var(--surface2); color: var(--text2); }
+
+/* REST TIMER */
+.timer-bar { position: fixed; bottom: calc(58px + env(safe-area-inset-bottom)); left: 0; right: 0; z-index: 150; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1); }
+.timer-bar.visible { transform: translateY(0); }
+.timer-inner { margin: 0 12px 8px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 -4px 24px rgba(0,0,0,0.4); }
+.timer-ring { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring-bg { fill: none; stroke: var(--border2); stroke-width: 3; }
+.timer-ring-fg { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.timer-ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.timer-text { flex: 1; }
+.timer-label { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; }
+.timer-countdown { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; }
+.timer-countdown.done { color: var(--accent); }
+.timer-actions { display: flex; gap: 8px; }
+.timer-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; }
+.timer-btn.accent { background: var(--accent); color: #0d0a0e; border-color: var(--accent); font-weight: 700; }
+
+/* EX INFO POPUP */
+.ex-info-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.ex-info-overlay.open { opacity: 1; pointer-events: all; }
+.ex-info-popup { background: var(--bg2); border-radius: 20px 20px 0 0; width: 100%; max-height: 80vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
+.ex-info-overlay.open .ex-info-popup { transform: translateY(0); }
+.ex-info-body { padding: 16px 20px 8px; }
+.ex-info-name { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+.ex-info-muscle { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+.ex-info-section { margin-bottom: 14px; }
+.ex-info-section-title { font-size: 11px; font-weight: 600; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; font-family: 'DM Mono', monospace; }
+.ex-info-text { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 300; }
+.ex-info-tips { list-style: none; }
+.ex-info-tips li { font-size: 13px; color: var(--text2); line-height: 1.6; font-weight: 300; padding: 4px 0 4px 14px; position: relative; }
+.ex-info-tips li::before { content: ""; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+/* PROGRESS */
+.prog-content { padding: 16px; }
+.prog-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
+.prog-card-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.stat-row:last-child { margin-bottom: 0; }
+.stat-name { font-size: 13px; color: var(--text2); }
+.stat-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: var(--accent); line-height: 1; }
+.stat-unit { font-size: 11px; color: var(--text3); margin-left: 3px; font-family: 'DM Mono', monospace; }
+.progress-bar-wrap { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.progress-bar { height: 100%; background: var(--accent); border-radius: 3px; }
+.pr-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.pr-row:last-child { border-bottom: none; }
+.pr-ex { font-size: 12px; color: var(--text2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pr-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); flex-shrink: 0; margin-left: 12px; }
+
+/* OVERVIEW */
+.ov-content { padding: 16px; }
+.phase-card { border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-bottom: 12px; }
+.pc-head { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
+.pc-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; line-height: 1.1; }
+.pc-weeks { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); }
+.pc-body { padding: 10px 14px 14px; background: var(--surface); display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.pc-stat-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; line-height: 1; }
+.pc-stat-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.pc-note { padding: 10px 14px 12px; background: var(--surface); border-top: 1px solid var(--border); font-size: 11px; color: var(--text2); line-height: 1.6; font-weight: 300; }
+.pc-b .pc-head { background: rgba(255,110,180,0.08); } .pc-b .pc-name { color: var(--accent); }
+.pc-d .pc-head { background: rgba(240,192,96,0.07); } .pc-d .pc-name { color: var(--gold); }
+.pc-p .pc-head { background: rgba(176,136,255,0.08); } .pc-p .pc-name { color: var(--pump); }
+.info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+.info-card-head { padding: 12px 14px; background: var(--bg3); border-bottom: 1px solid var(--border); font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+.info-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+.info-row:last-child { border-bottom: none; }
+.info-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+.info-day { width: 28px; font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.info-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.info-sub { font-size: 11px; color: var(--text2); font-weight: 300; }
+.prin-row { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.prin-row:last-child { border-bottom: none; }
+.prin-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.prin-desc { font-size: 11px; color: var(--text2); line-height: 1.6; font-weight: 300; }
+::-webkit-scrollbar { width: 0; background: transparent; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="v-workout" class="view"></div>
+  <div id="v-progress" class="view hidden"></div>
+  <div id="v-overview" class="view hidden"></div>
+  <nav>
+    <button class="nav-btn active" id="nb-workout" onclick="setTab('workout')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Workout
+    </button>
+    <button class="nav-btn" id="nb-progress" onclick="setTab('progress')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Progress
+    </button>
+    <button class="nav-btn" id="nb-overview" onclick="setTab('overview')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Overview
+    </button>
+  </nav>
+  <div class="timer-bar" id="timer-bar">
+    <div class="timer-inner">
+      <div class="timer-ring">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle class="timer-ring-bg" cx="20" cy="20" r="17"/>
+          <circle class="timer-ring-fg" id="timer-ring-fg" cx="20" cy="20" r="17" style="stroke-dasharray:106.8;stroke-dashoffset:0"/>
+        </svg>
+        <div class="timer-ring-label" id="timer-ring-label"></div>
+      </div>
+      <div class="timer-text">
+        <div class="timer-label">REST TIMER</div>
+        <div class="timer-countdown" id="timer-countdown">2:00</div>
+      </div>
+      <div class="timer-actions">
+        <button class="timer-btn" onclick="startTimer()">Reset</button>
+        <button class="timer-btn accent" onclick="stopTimer()">Skip</button>
+      </div>
+    </div>
+  </div>
+  <div id="ex-info-overlay" class="ex-info-overlay" onclick="if(event.target===this)closeExInfo()">
+    <div id="ex-info-popup" class="ex-info-popup"></div>
+  </div>
+  <div id="overlay" class="overlay" onclick="overlayClick(event)">
+    <div id="modal" class="modal"></div>
+  </div>
+</div>
+<script>
+var SPLIT = [
+  {day:"A", type:"glute", label:"Glute Focus", sub:"Primary glute + hamstring session", ex:[
+    "Barbell Hip Thrust","Smith Machine RDL","DB Bulgarian Split Squat","Cable Kickback","Abduction Machine","Leg Curl","Glute Bridge Pulse"
+  ]},
+  {day:"B", type:"core", label:"Glute + Core", sub:"Glutes, stability and core strength", ex:[
+    "Smith Machine Hip Thrust","Back Extension","Sumo Deadlift","Copenhagen Plank","Dead Bug","Cable Pull Through","Pallof Press"
+  ]},
+  {day:"C", type:"upper", label:"Upper Tone", sub:"Tone without bulk - push and pull", ex:[
+    "Lat Pulldown","Seated Cable Row","DB Shoulder Press","Cable Lateral Raise","Incline DB Press","Tricep Rope Pushdown","Face Pulls"
+  ]},
+  {day:"D", type:"pump", label:"Glute Pump", sub:"Optional 4th day - isolation finishers", ex:[
+    "Hip Thrust Machine","Curtsy Lunge","Cable Abduction","Seated Abduction Machine","Reverse Hyperextension","Banded Clamshell","Donkey Kick Cable"
+  ]}
+];
+
+var WEEKS = [
+  {n:1,  phase:"Build",  pc:"p-build",  sets:3, reps:"12-15", rir:"3 RIR", days:3, note:"Week 1 - learn the movements and find your starting weights. Focus on feeling the glute contract on every rep."},
+  {n:2,  phase:"Build",  pc:"p-build",  sets:3, reps:"12-15", rir:"2 RIR", days:3, note:"Add weight or reps wherever possible. You should feel your glutes the next day - that is a good sign."},
+  {n:3,  phase:"Build",  pc:"p-build",  sets:3, reps:"12-15", rir:"2 RIR", days:3, note:"Same structure, keep progressing load. Start adding Day D as a 4th optional session if energy allows."},
+  {n:4,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-15", rir:"2 RIR", days:4, note:"4 sets now. Increase load on hip thrusts and split squats - these are your primary drivers."},
+  {n:5,  phase:"Deload", pc:"p-deload", sets:2, reps:"12-15", rir:"5 RIR", days:3, note:"Deload week - 2 sets, lighter weights, 3 sessions only. Your muscles repair and grow during this week."},
+  {n:6,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-12", rir:"2 RIR", days:4, note:"Phase 2 begins. Slightly heavier, slightly fewer reps. Hip thrust should increase significantly from Week 4."},
+  {n:7,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-12", rir:"1 RIR", days:4, note:"Push the last set of each exercise close to failure. This is where shape really starts to change."},
+  {n:8,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-12", rir:"1 RIR", days:4, note:"Maintain the load increases. Take progress photos this week - compare to Week 1."},
+  {n:9,  phase:"Build",  pc:"p-build",  sets:4, reps:"8-12",  rir:"1 RIR", days:4, note:"Increase hip thrust weight. Last set of Bulgarian split squat and RDL to near failure."},
+  {n:10, phase:"Deload", pc:"p-deload", sets:2, reps:"12-15", rir:"5 RIR", days:3, note:"Second deload. Same rules - lighter, fewer sets, 3 days. Do not skip this."},
+  {n:11, phase:"Peak",   pc:"p-peak",   sets:5, reps:"8-12",  rir:"1 RIR", days:4, note:"Peak phase - 5 sets on primary exercises. Last set of hip thrust and split squat to 0-1 RIR."},
+  {n:12, phase:"Peak",   pc:"p-peak",   sets:5, reps:"8-12",  rir:"0 RIR", days:4, note:"Final week. Last set of every exercise to true failure. Take final progress photos. You earned this."}
+];
+
+var PHASE_CARDS = [
+  {cls:"pc-b", name:"Build Phase",  weeks:"Weeks 1-4, 6-9", sets:"3-4", reps:"10-15", rir:"1-3", note:"Progressive overload every session. Hip thrusts and Bulgarian split squats are your primary growth drivers - prioritize load increases here."},
+  {cls:"pc-d", name:"Deload",       weeks:"Weeks 5 + 10",   sets:"2",   reps:"12-15", rir:"5",   note:"Mandatory recovery. 10-15% lighter, 2 sets only. This is where muscles repair and shape improves - do not skip."},
+  {cls:"pc-p", name:"Peak",         weeks:"Weeks 11-12",    sets:"5",   reps:"8-12",  rir:"0-1", note:"Maximum stimulus. 5 sets on every exercise. Last set goes to or near true failure. This is the peak of the program."}
+];
+
+var PRINCIPLES = [
+  ["Mind-Muscle Connection", "On every glute exercise, actively squeeze the glute at the top of the movement. If you cannot feel it working, the weight may be too heavy or form needs adjustment."],
+  ["Hip Thrust Priority",    "The barbell hip thrust is your most important exercise. Treat it like a squat or deadlift - track it weekly, increase load consistently, and warm up properly."],
+  ["Progressive Overload",   "Add weight or reps every session. Small increases are fine - even 1kg more on hip thrusts per week adds up to 12kg over this program."],
+  ["Protein Intake",         "To build glute muscle without adding unwanted mass elsewhere, aim for 1.6-2g protein per kg bodyweight. This supports muscle growth while keeping total calories in check."],
+  ["Hip Dips",               "Hip dips are structural - caused by bone shape - but building the glute medius (side glute) fills them in significantly. Abduction exercises and side-lying movements target this directly."],
+  ["Upper Body Approach",    "Day C is designed to tone and strengthen without adding bulk. Keep weights moderate, rep ranges higher (12-15), and never push upper body sets to failure."],
+  ["Rest Periods",           "Glute exercises: 2-3 min between sets. Isolation work (cables, abductions): 60-90 sec. Hip thrusts specifically need full recovery between sets."]
+];
+
+var EX_INFO = {
+  "Barbell Hip Thrust": {muscle:"Glutes (max)", exec:"Sit with upper back against bench, barbell over hips with pad. Drive hips up explosively, squeeze glutes hard at the top. Hold 1-2 seconds. Lower with control.", tips:["Chin tucked - do not hyperextend your neck","Drive through your heels, not your toes","Squeeze glutes at the top - hold for 1-2 seconds","Knees stay at 90 degrees at the top - not caving in","This is your most important exercise - train it heavy"]},
+  "Smith Machine RDL":  {muscle:"Hamstrings / Glutes", exec:"Stand hip-width, soft knees. Hinge at hips pushing them back, bar stays close to legs. Lower until you feel a deep hamstring stretch, then drive hips forward to return.", tips:["This is a hip hinge - not a squat","Feel the hamstring stretch - that is the cue to reverse","Keep spine neutral - no rounding of lower back","Smith machine path helps beginners stay controlled","Go slow on the way down - 3 second eccentric"]},
+  "DB Bulgarian Split Squat": {muscle:"Glutes / Quads", exec:"Rear foot elevated on bench, dumbbells in hands. Lower back knee toward floor keeping front shin vertical. Drive through front heel to stand.", tips:["Front foot far enough forward that shin stays vertical","Lower slowly - 2-3 seconds down","Drive through your heel to emphasize glutes over quads","Keep torso upright or slightly forward leaning","This will be uncomfortable at first - persist through it"]},
+  "Cable Kickback":     {muscle:"Glutes (isolation)", exec:"Ankle strap on low cable. Hinge slightly forward, kick leg back until fully extended. Squeeze glute hard at top. Control return.", tips:["Do not swing or use momentum","Lead with the heel, not the toe","Squeeze hard at the top for 1 second","Keep slight forward hinge throughout","Go light - this is an isolation finisher"]},
+  "Abduction Machine":  {muscle:"Glute Medius (hip dips)", exec:"Sit in machine, pads on inner knees. Push knees apart as wide as possible. Hold 1 second. Slowly return - do not let weight crash.", tips:["This targets the glute medius - critical for hip dip reduction","Slow controlled negative is key","Full range of motion - push as wide as possible","Lean forward slightly for more glute med activation","Go higher reps here - 15-20 works well"]},
+  "Leg Curl":           {muscle:"Hamstrings", exec:"Lie prone, pad behind ankles. Curl heels toward glutes as far as possible. Squeeze for 1 second. Lower with 3 second eccentric.", tips:["Plantar flex feet (point toes) for more activation","Full range - heels to glutes","Slow 3 second negative is critical","Do not let hips rise off the pad","Keep this as a complement to RDLs, not a replacement"]},
+  "Glute Bridge Pulse": {muscle:"Glutes (burnout)", exec:"Bodyweight or light barbell. Hold at the top position and pulse with small 2-3 cm movements. Keep constant tension on glutes. 20-30 pulses.", tips:["This is a finisher - done last in the session","Constant tension - never fully lower","Squeeze as hard as possible throughout","Can add a resistance band above knees","Feel the burn - this is normal and productive"]},
+  "Smith Machine Hip Thrust": {muscle:"Glutes (variation)", exec:"Same as barbell hip thrust but using Smith machine bar. The fixed path allows you to focus purely on the glute squeeze.", tips:["Great option when the barbell is taken","Can go slightly heavier than free barbell due to stability","Same cues - squeeze at top, chin tucked, heels down","Vary between barbell and Smith for stimulus variation"]},
+  "Back Extension":     {muscle:"Glutes / Hamstrings / Erectors", exec:"Lie in hyperextension machine at 45 degrees. Round slightly, lower until stretched. Drive hips forward and squeeze glutes at top.", tips:["With a rounded back at the bottom you get more hamstring stretch","Drive hips into the pad at the top for glute emphasis","Can hold a weight plate to add resistance","Do not hyperextend at the top - stop when spine is neutral"]},
+  "Sumo Deadlift":      {muscle:"Glutes / Inner Thighs / Hamstrings", exec:"Wide stance, toes pointed out. Grip bar inside legs. Drive hips through and squeeze glutes hard at lockout.", tips:["Wide stance and toes out shifts more emphasis to glutes","Keep chest up and back straight throughout","Drive knees out over toes throughout the movement","Squeeze glutes hard at lockout - do not just stand up"]},
+  "Copenhagen Plank":   {muscle:"Inner Thighs / Core / Hip Stabilizers", exec:"Side plank with top leg on a bench. Hold position. Can do as static hold or add raises with bottom leg.", tips:["This directly targets hip adductors - great for hip stability","Start with shorter holds and build up","Helps with hip dip appearance over time","Keep hips stacked and body in a straight line"]},
+  "Dead Bug":           {muscle:"Deep Core / Transverse Abdominus", exec:"Lie on back, arms up, knees at 90 degrees. Slowly lower opposite arm and leg toward floor without lower back lifting. Return. Alternate.", tips:["Lower back MUST stay pressed into floor throughout","Move slowly and with full control","Breathe out as you lower limbs","This is one of the best core exercises for women - no risk of thickening the waist"]},
+  "Cable Pull Through": {muscle:"Glutes / Hamstrings", exec:"Face away from low cable, rope between legs. Hinge forward pushing hips back until stretch felt. Drive hips forward squeezing glutes.", tips:["Great hip hinge pattern teacher","Focus on driving hips through - not pulling with arms","Squeeze glutes hard at the top","Lighter weight with perfect form beats heavy and sloppy"]},
+  "Pallof Press":       {muscle:"Core Anti-Rotation / Obliques", exec:"Stand sideways to cable. Hold handle at chest, press out to full extension, hold 2 seconds, return. The key is resisting rotation.", tips:["Do not rotate - fight the cable pulling you","Stand tall, brace your core throughout","This builds core stability not size - great for women","Keep breathing - do not hold your breath"]},
+  "Lat Pulldown":       {muscle:"Lats / Biceps", exec:"Grip bar slightly wider than shoulders. Pull to upper chest driving elbows down. Lean back slightly. Full stretch at top.", tips:["Drive elbows to back pockets - not hands to chest","Keep chest up throughout","Full stretch at top - arms fully extended","Moderate weight - this is toning not building"]},
+  "Seated Cable Row":   {muscle:"Mid Back / Rear Delts", exec:"Pull handle to lower chest, drive elbows back. Pause at peak. Return to full stretch.", tips:["Squeeze shoulder blades together at peak","Keep torso upright - minimal lean","Full stretch forward is key","Medium-high reps keep this toning focused"]},
+  "DB Shoulder Press":  {muscle:"Shoulders", exec:"Seated, dumbbells at ear height. Press overhead to near lockout. Lower to ear level under control.", tips:["Keep weight moderate - we do not want shoulder growth","Do not flare elbows excessively","Control the descent fully","12-15 reps keeps this in the toning range"]},
+  "Cable Lateral Raise":{muscle:"Side Delts", exec:"Single arm cable from low position. Raise arm out to shoulder height. Control descent.", tips:["Light weight - this is toning","Full range of motion","Slow controlled movement throughout","No momentum - pure muscle control"]},
+  "Incline DB Press":   {muscle:"Upper Chest", exec:"30-45 degree bench. Lower dumbbells to upper chest, press to lockout.", tips:["Moderate weight for toning","Full range of motion","Elbows at 45-75 degrees","Keep reps in the 12-15 range"]},
+  "Tricep Rope Pushdown":{muscle:"Triceps", exec:"High cable, rope attachment. Push down to full extension, spreading rope at the bottom. Slow return.", tips:["Keep elbows pinned at sides","Full extension at the bottom","This tones the back of the arm - very popular exercise for this reason","No need to go heavy - 12-15 reps"]},
+  "Face Pulls":         {muscle:"Rear Delts / External Rotators", exec:"Cable at face height, rope. Pull to forehead with elbows high. Externally rotate at peak.", tips:["Essential for shoulder health","Keep elbows high throughout","Light weight, perfect form","Great for posture and shoulder stability"]},
+  "Hip Thrust Machine": {muscle:"Glutes", exec:"Follow machine setup instructions. Drive hips up, squeeze glutes hard at top for 1-2 seconds. Controlled descent.", tips:["If your gym has a dedicated hip thrust machine - use it","Same cues as barbell: squeeze at top, chin down","Great for tracking load progression","Can go heavier than barbell due to stability"]},
+  "Curtsy Lunge":       {muscle:"Glutes / Glute Medius / Inner Thigh", exec:"Step one foot back and across behind the other. Lower back knee toward floor. Return to start. Alternate.", tips:["This targets glute medius which reduces hip dip appearance","Keep chest upright","Control the movement - no rushing","Great shape builder for the outer glute area"]},
+  "Cable Abduction":    {muscle:"Glute Medius", exec:"Ankle strap on low cable, stand sideways. Raise leg out to the side. Control return. Do not let cable pull leg across body.", tips:["Pure glute medius isolation","Light weight, full range of motion","Squeeze at the top of each rep","This directly addresses hip dip appearance over time"]},
+  "Seated Abduction Machine": {muscle:"Glute Medius / Outer Glutes", exec:"Sit in machine. Push knees apart to maximum. Hold 1 second. Controlled return.", tips:["Lean forward for more glute medius activation","Full range every rep","This is your hip dip reduction tool - take it seriously","Higher reps (15-20) work best here"]},
+  "Reverse Hyperextension": {muscle:"Glutes / Hamstrings / Lower Back", exec:"Lie face down on machine, hold handles. Raise legs behind you squeezing glutes at top. Lower with control.", tips:["Excellent glute developer with minimal lower back stress","Squeeze hard at the top - pause 1 second","Keep movement controlled - no swinging","Great for building the lower glute area"]},
+  "Banded Clamshell":   {muscle:"Glute Medius", exec:"Lie on side, band above knees, knees bent. Keeping feet together, raise top knee as high as possible. Lower with control.", tips:["This is a hip dip targeting exercise","Keep hips stacked - do not roll back","Move slowly and feel the glute medius work","Good as a warmup or finisher"]},
+  "Donkey Kick Cable":  {muscle:"Glutes", exec:"On all fours, ankle strap on cable. Kick leg back and up, squeezing glute at top. Lower with control.", tips:["Squeeze glute hard at the top","Do not rotate the hip - kick straight back","Keep core engaged throughout","Great pump exercise as a finisher"]}
+};
+
+var DOT = {glute:"#ff6eb4", core:"#f0c060", upper:"#80c8ff", pump:"#b088ff", rest:"#3d3342"};
+var curTab  = "workout";
+var curWeek = 1;
+var timerDuration = 120;
+var timerRemaining = 0;
+var timerInterval = null;
+
+function dbLoad() { try { return JSON.parse(localStorage.getItem("glute12w") || "{}"); } catch(e) { return {}; } }
+function dbSave(db) { try { localStorage.setItem("glute12w", JSON.stringify(db)); } catch(e) {} }
+function dbKey(w, ex) { return "w" + w + "_" + ex; }
+function dbGet(db, w, ex) { return db[dbKey(w, ex)] || null; }
+function dbSet(db, w, ex, val) { db[dbKey(w, ex)] = val; dbSave(db); }
+
+function getHistory(db, ex) {
+  var out = [];
+  for (var w = 1; w <= 12; w++) {
+    var d = dbGet(db, w, ex);
+    if (d && d.sets) {
+      var has = false;
+      for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].kg || d.sets[i].reps) { has = true; break; } }
+      if (has) out.push({week:w, sets:d.sets, date:d.date||""});
+    }
+  }
+  return out;
+}
+function getLastPerf(db, week, ex) {
+  for (var w = week - 1; w >= 1; w--) {
+    var d = dbGet(db, w, ex);
+    if (d && d.sets) {
+      var done = [];
+      for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].kg || d.sets[i].reps) done.push(d.sets[i]); }
+      if (done.length) return {week:w, sets:done};
+    }
+  }
+  return null;
+}
+function getDone(db, week, ex) {
+  var d = dbGet(db, week, ex);
+  if (!d || !d.sets) return 0;
+  var c = 0;
+  for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].done) c++; }
+  return c;
+}
+function g(id) { return document.getElementById(id); }
+
+function setTab(tab) {
+  curTab = tab;
+  ["workout","progress","overview"].forEach(function(t) {
+    g("nb-" + t).classList.toggle("active", t === tab);
+    var v = g("v-" + t);
+    if (t === tab) v.classList.remove("hidden"); else v.classList.add("hidden");
+  });
+  if (tab === "workout")  renderWorkout();
+  if (tab === "progress") renderProgress();
+  if (tab === "overview") renderOverview();
+}
+
+function selectWeek(n) { curWeek = n; renderWorkout(); }
+
+function renderWorkout() {
+  var db = dbLoad();
+  var wk = WEEKS[curWeek - 1];
+
+  var chips = "";
+  for (var i = 0; i < WEEKS.length; i++) {
+    var w = WEEKS[i];
+    chips += '<button class="wchip' + (w.n === curWeek ? " active" : "") + (w.phase==="Peak"?" peak":"") + '" onclick="selectWeek(' + w.n + ')">W' + w.n + '</button>';
+  }
+
+  var banner = '<div class="week-banner ' + wk.pc + '">' +
+    '<div class="wb-left"><div class="wb-phase">' + wk.phase + '</div><div class="wb-title">Week ' + wk.n + ' of 12</div></div>' +
+    '<div class="wb-stats">' +
+      '<div class="wb-stat"><div class="wb-val">' + wk.sets + '</div><div class="wb-lbl">Sets</div></div>' +
+      '<div class="wb-stat"><div class="wb-val">' + wk.reps + '</div><div class="wb-lbl">Reps</div></div>' +
+      '<div class="wb-stat"><div class="wb-val">' + wk.days + '</div><div class="wb-lbl">Days</div></div>' +
+    '</div></div>';
+
+  var activeSplit = wk.days >= 4 ? SPLIT : SPLIT.slice(0, 3);
+  var allEx = [];
+  for (var di = 0; di < activeSplit.length; di++) { for (var ei = 0; ei < activeSplit[di].ex.length; ei++) allEx.push(activeSplit[di].ex[ei]); }
+  var weekDone = allEx.length > 0 && allEx.every(function(ex) { return getDone(db, curWeek, ex) >= wk.sets; });
+
+  var days = "";
+  for (var d = 0; d < activeSplit.length; d++) {
+    var day = activeSplit[d];
+    var rows = "";
+    for (var e = 0; e < day.ex.length; e++) {
+      var ex = day.ex[e];
+      var done = getDone(db, curWeek, ex);
+      var isDone = done >= wk.sets;
+      var last = getLastPerf(db, curWeek, ex);
+      var lastStr = "No previous data";
+      if (last && last.sets.length) {
+        var maxKg = 0;
+        for (var s = 0; s < last.sets.length; s++) { if (last.sets[s].kg && +last.sets[s].kg > maxKg) maxKg = +last.sets[s].kg; }
+        lastStr = "Wk" + last.week + ": " + (maxKg > 0 ? maxKg + " kg" : "--");
+      }
+      var safeEx = encodeURIComponent(ex);
+      rows += '<div class="ex-row" onclick="openModal(\'' + safeEx + '\',\'' + day.type + '\')">' +
+        '<div class="ex-info"><div class="ex-name">' + ex + '</div><div class="ex-last' + (last?" has":"") + '">' + lastStr + '</div></div>' +
+        '<div class="ex-right"><div class="ex-rx">' + wk.sets + 'x' + wk.reps + '</div><div class="ex-bubble' + (isDone?" done":"") + '">' + done + '/' + wk.sets + '</div></div>' +
+      '</div>';
+    }
+    days += '<div class="day-section">' +
+      '<div class="day-header t-' + day.type + '">' +
+        '<div class="day-dot"></div>' +
+        '<div class="day-day">DAY ' + day.day + '</div>' +
+        '<div class="day-type">' + day.label + '</div>' +
+        '<div class="day-sub">' + day.sub + '</div>' +
+      '</div>' +
+      '<div class="ex-list">' + rows + '</div></div>';
+  }
+
+  g("v-workout").innerHTML =
+    '<div class="page-header"><h1>GluteBuilder <span>12W</span></h1><p>' + wk.phase + ' - ' + wk.sets + ' sets - ' + wk.reps + ' reps - ' + wk.days + ' days this week</p></div>' +
+    '<div class="week-strip" id="wstrip">' + chips + '</div>' +
+    banner +
+    (weekDone ? '<div class="week-complete-bar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Week ' + wk.n + ' complete - you smashed it!</div>' : '') +
+    '<div class="coach-note">' + wk.note + '</div>' +
+    days +
+    '<div style="height:8px"></div>';
+
+  setTimeout(function() {
+    var strip = g("wstrip");
+    if (!strip) return;
+    var active = strip.querySelector(".wchip.active");
+    if (active) active.scrollIntoView({inline:"center", behavior:"smooth", block:"nearest"});
+  }, 50);
+}
+
+function openModal(safeEx, dayType) {
+  var ex = decodeURIComponent(safeEx);
+  var db = dbLoad();
+  var wk = WEEKS[curWeek - 1];
+  var existing = dbGet(db, curWeek, ex);
+  var history  = getHistory(db, ex);
+  var last     = getLastPerf(db, curWeek, ex);
+  var suggestKg = 0;
+  if (last && last.sets.length) {
+    for (var s = 0; s < last.sets.length; s++) { if (last.sets[s].kg && +last.sets[s].kg > suggestKg) suggestKg = +last.sets[s].kg; }
+  }
+
+  var sets = existing && existing.sets ? existing.sets.slice() : [];
+  while (sets.length < wk.sets) sets.push({kg:"", reps:"", done:false});
+
+  var setRows = "";
+  for (var i = 0; i < sets.length; i++) {
+    var s = sets[i];
+    var kgPh = suggestKg > 0 ? suggestKg : "kg";
+    var repsPh = wk.reps.split("-")[0];
+    setRows += '<div class="set-row">' +
+      '<div class="set-num">SET ' + (i+1) + '</div>' +
+      '<div class="set-inputs">' +
+        '<div class="field-wrap"><input class="set-input" type="number" id="kg' + i + '" value="' + (s.kg||"") + '" placeholder="' + kgPh + '" inputmode="decimal" step="0.5" min="0"><div class="field-lbl">KG</div></div>' +
+        '<div class="field-wrap"><input class="set-input" type="number" id="rp' + i + '" value="' + (s.reps||"") + '" placeholder="' + repsPh + '" inputmode="numeric" min="0" max="99"><div class="field-lbl">REPS</div></div>' +
+      '</div>' +
+      '<button class="check-btn' + (s.done?" done":"") + '" id="chk' + i + '" onclick="toggleCheck(' + i + ',' + suggestKg + ',\'' + repsPh + '\')">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '</button></div>';
+  }
+
+  var histHtml = "";
+  if (history.length) {
+    histHtml = '<div class="history-sec"><div class="history-title">History</div>';
+    var recent = history.slice().reverse().slice(0,5);
+    for (var h = 0; h < recent.length; h++) {
+      var entry = recent[h];
+      var setsHtml = "";
+      for (var si = 0; si < entry.sets.length; si++) {
+        var sv = entry.sets[si];
+        if (sv.kg || sv.reps) setsHtml += '<div class="hist-set">' + (sv.kg||"?") + 'kg x ' + (sv.reps||"?") + '</div>';
+      }
+      histHtml += '<div class="hist-entry"><div class="hist-wk">Week ' + entry.week + (entry.date?" - "+entry.date:"") + '</div><div class="hist-sets">' + setsHtml + '</div></div>';
+    }
+    histHtml += '</div>';
+  }
+
+  g("modal").innerHTML =
+    '<div class="modal-handle"></div>' +
+    '<div class="modal-head">' +
+      '<div class="modal-daytype">' + dayType.toUpperCase() + '</div>' +
+      '<div class="modal-title" onclick="showExInfo(\'' + safeEx + '\')">' + ex + ' <span class="modal-title-hint">?</span></div>' +
+      '<div class="modal-sub">' + wk.sets + ' sets - ' + wk.reps + ' reps - ' + wk.rir + ' - Week ' + wk.n + '</div>' +
+      (suggestKg > 0 ? '<div class="modal-hint">Last logged: ' + suggestKg + ' kg</div>' : '') +
+    '</div>' +
+    '<div class="set-logger"><div class="logger-title">Log Sets</div>' + setRows + '</div>' +
+    histHtml +
+    '<div class="modal-actions"><button class="btn btn-primary" onclick="saveModal(\'' + safeEx + '\',' + wk.sets + ')">Save Sets</button><button class="btn btn-ghost" onclick="closeModal()">Close</button></div>' +
+    '<div style="height:8px"></div>';
+
+  g("overlay").classList.add("open");
+}
+
+function toggleCheck(i, suggestKg, repsPh) {
+  var btn = g("chk" + i);
+  btn.classList.toggle("done");
+  if (btn.classList.contains("done")) {
+    var kgEl = g("kg" + i);
+    var rpEl = g("rp" + i);
+    if (kgEl && !kgEl.value && suggestKg) kgEl.value = suggestKg;
+    if (rpEl && !rpEl.value) rpEl.value = repsPh;
+    startTimer();
+  } else {
+    stopTimer();
+  }
+}
+
+function saveModal(safeEx, numSets) {
+  var ex = decodeURIComponent(safeEx);
+  var db = dbLoad();
+  var sets = [];
+  for (var i = 0; i < numSets; i++) {
+    var kgEl  = g("kg"  + i);
+    var rpEl  = g("rp"  + i);
+    var chkEl = g("chk" + i);
+    sets.push({kg:kgEl?kgEl.value:"", reps:rpEl?rpEl.value:"", done:chkEl?chkEl.classList.contains("done"):false});
+  }
+  var now = new Date();
+  var date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
+  dbSet(db, curWeek, ex, {sets:sets, date:date});
+  closeModal();
+  renderWorkout();
+}
+
+function closeModal() { g("overlay").classList.remove("open"); }
+function overlayClick(e) { if (e.target === g("overlay")) closeModal(); }
+
+function showExInfo(safeEx) {
+  var ex = decodeURIComponent(safeEx);
+  var info = EX_INFO[ex];
+  var popup = g("ex-info-popup");
+  if (!info) {
+    popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body"><div class="ex-info-name">' + ex + '</div><div class="ex-info-text" style="margin-top:12px">No description available.</div></div>';
+  } else {
+    var tips = info.tips.map(function(t){ return "<li>" + t + "</li>"; }).join("");
+    popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body">' +
+      '<div class="ex-info-name">' + ex + '</div>' +
+      '<div class="ex-info-muscle">' + info.muscle + '</div>' +
+      '<div class="ex-info-section"><div class="ex-info-section-title">Execution</div><div class="ex-info-text">' + info.exec + '</div></div>' +
+      '<div class="ex-info-section"><div class="ex-info-section-title">Key Tips</div><ul class="ex-info-tips">' + tips + '</ul></div>' +
+      '</div><div style="height:20px"></div>';
+  }
+  g("ex-info-overlay").classList.add("open");
+}
+function closeExInfo() { g("ex-info-overlay").classList.remove("open"); }
+
+function startTimer() {
+  stopTimer();
+  timerRemaining = timerDuration;
+  var bar = g("timer-bar");
+  if (bar) bar.classList.add("visible");
+  updateTimerDisplay();
+  timerInterval = setInterval(function() {
+    timerRemaining--;
+    updateTimerDisplay();
+    if (timerRemaining <= 0) { stopTimer(); timerDone(); }
+  }, 1000);
+}
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  var bar = g("timer-bar");
+  if (bar) bar.classList.remove("visible");
+}
+function timerDone() {
+  var bar = g("timer-bar");
+  if (bar) bar.classList.add("visible");
+  var cd = g("timer-countdown");
+  if (cd) { cd.textContent = "GO!"; cd.classList.add("done"); }
+  playBeep();
+  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    new Notification("Rest over!", {body:"Time for your next set.", icon:"/GluteBuilder/icon-192.png"});
+  }
+  setTimeout(function() {
+    var bar2 = g("timer-bar");
+    if (bar2) bar2.classList.remove("visible");
+    var cd2 = g("timer-countdown");
+    if (cd2) cd2.classList.remove("done");
+  }, 3000);
+}
+function playBeep() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq, start, dur) {
+      var o = ctx.createOscillator(); var gn = ctx.createGain();
+      o.connect(gn); gn.connect(ctx.destination);
+      o.frequency.value = freq; o.type = "sine";
+      gn.gain.setValueAtTime(0.4, ctx.currentTime + start);
+      gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+      o.start(ctx.currentTime + start); o.stop(ctx.currentTime + start + dur);
+    }
+    beep(880, 0, 0.15); beep(880, 0.18, 0.15); beep(1100, 0.36, 0.3);
+  } catch(e) {}
+}
+function updateTimerDisplay() {
+  var cd   = g("timer-countdown");
+  var ring = g("timer-ring-fg");
+  if (!cd) return;
+  var mins = Math.floor(timerRemaining / 60);
+  var secs = timerRemaining % 60;
+  cd.textContent = mins + ":" + (secs < 10 ? "0" : "") + secs;
+  var pct = timerDuration > 0 ? timerRemaining / timerDuration : 0;
+  var circ = 2 * Math.PI * 17;
+  if (ring) { ring.style.strokeDasharray = circ; ring.style.strokeDashoffset = circ * (1 - pct); }
+}
+
+function renderProgress() {
+  var db = dbLoad();
+  var totalSets = 0, totalEx = 0;
+  var prs = {};
+  var weeksLogged = {};
+  for (var w = 1; w <= 12; w++) {
+    for (var d = 0; d < SPLIT.length; d++) {
+      for (var e = 0; e < SPLIT[d].ex.length; e++) {
+        var ex = SPLIT[d].ex[e];
+        var data = dbGet(db, w, ex);
+        if (data && data.sets) {
+          var hasDone = false;
+          for (var si = 0; si < data.sets.length; si++) {
+            var s = data.sets[si];
+            if (s.done || s.kg || s.reps) { hasDone = true; totalSets++; }
+          }
+          if (hasDone) {
+            totalEx++; weeksLogged[w] = true;
+            var maxKg = 0;
+            for (var si2 = 0; si2 < data.sets.length; si2++) { if (data.sets[si2].kg && +data.sets[si2].kg > maxKg) maxKg = +data.sets[si2].kg; }
+            if (maxKg > 0 && (!prs[ex] || maxKg > prs[ex].kg)) prs[ex] = {kg:maxKg, week:w};
+          }
+        }
+      }
+    }
+  }
+  var weeksCount = Object.keys(weeksLogged).length;
+  var pct = Math.round((weeksCount / 12) * 100);
+  var prArr = [];
+  for (var exKey in prs) { prArr.push({ex:exKey, kg:prs[exKey].kg, week:prs[exKey].week}); }
+  prArr.sort(function(a,b){ return b.kg - a.kg; });
+  prArr = prArr.slice(0,12);
+  var prHtml = prArr.length ? prArr.map(function(p){ return '<div class="pr-row"><div class="pr-ex">' + p.ex + '</div><div class="pr-val">' + p.kg + ' kg <span style="color:var(--text3);font-size:10px">Wk'+p.week+'</span></div></div>'; }).join("") : '<div style="font-size:12px;color:var(--text3);font-style:italic">No weights logged yet.</div>';
+  var heatmap = "";
+  for (var wi = 0; wi < WEEKS.length; wi++) {
+    var ww = WEEKS[wi];
+    var active = !!weeksLogged[ww.n];
+    var col = active ? (ww.phase==="Deload"?"var(--gold)":ww.phase==="Peak"?"var(--pump)":"var(--accent)") : "var(--surface2)";
+    heatmap += '<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;aspect-ratio:1;border-radius:5px;background:' + col + ';opacity:' + (active?1:0.4) + '"></div><div style="font-size:9px;color:var(--text3);font-family:\'DM Mono\',monospace">W' + ww.n + '</div></div>';
+  }
+  g("v-progress").innerHTML =
+    '<div class="page-header"><h1>Your <span>Progress</span></h1><p>12-week tracking overview</p></div>' +
+    '<div class="prog-content">' +
+      '<div class="prog-card"><div class="prog-card-title">Program Progress</div>' +
+        '<div class="stat-row"><div class="stat-name">Weeks active</div><div><span class="stat-val">' + weeksCount + '</span><span class="stat-unit">/ 12</span></div></div>' +
+        '<div class="progress-bar-wrap"><div class="progress-bar" style="width:' + pct + '%"></div></div>' +
+        '<div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:\'DM Mono\',monospace;text-align:right">' + pct + '% complete</div>' +
+      '</div>' +
+      '<div class="prog-card"><div class="prog-card-title">Volume</div>' +
+        '<div class="stat-row"><div class="stat-name">Total sets logged</div><div><span class="stat-val">' + totalSets + '</span></div></div>' +
+        '<div class="stat-row"><div class="stat-name">Exercise sessions</div><div><span class="stat-val">' + totalEx + '</span></div></div>' +
+      '</div>' +
+      '<div class="prog-card"><div class="prog-card-title">Top Weights (PRs)</div>' + prHtml + '</div>' +
+      '<div class="prog-card"><div class="prog-card-title">Week Activity</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px">' + heatmap + '</div></div>' +
+    '</div>';
+}
+
+function renderOverview() {
+  var phaseCards = PHASE_CARDS.map(function(p) {
+    return '<div class="phase-card ' + p.cls + '"><div class="pc-head"><div class="pc-name">' + p.name + '</div><div class="pc-weeks">' + p.weeks + '</div></div>' +
+      '<div class="pc-body"><div><div class="pc-stat-val">' + p.sets + '</div><div class="pc-stat-lbl">Sets</div></div><div><div class="pc-stat-val">' + p.reps + '</div><div class="pc-stat-lbl">Reps</div></div><div><div class="pc-stat-val">' + p.rir + '</div><div class="pc-stat-lbl">RIR</div></div></div>' +
+      '<div class="pc-note">' + p.note + '</div></div>';
+  }).join("");
+
+  var splitRows = SPLIT.map(function(day, i) {
+    var col = DOT[day.type] || "#3d3342";
+    var bg = i % 2 ? "var(--surface)" : "transparent";
+    return '<div class="info-row" style="background:' + bg + '"><div class="info-dot" style="background:' + col + '"></div><div class="info-day">' + day.day + '</div><div><div class="info-label">' + day.label + '</div><div class="info-sub">' + day.sub + '</div></div></div>';
+  }).join("");
+
+  var princRows = PRINCIPLES.map(function(p, i) {
+    var bg = i % 2 ? "var(--surface)" : "transparent";
+    return '<div class="prin-row" style="background:' + bg + '"><div class="prin-title">' + p[0] + '</div><div class="prin-desc">' + p[1] + '</div></div>';
+  }).join("");
+
+  g("v-overview").innerHTML =
+    '<div class="page-header"><h1>Program <span>Overview</span></h1><p>12-Week Glute Builder - 3 to 4 days per week</p></div>' +
+    '<div class="ov-content">' + phaseCards +
+    '<div class="info-card"><div class="info-card-head">The 4 Sessions</div>' + splitRows + '</div>' +
+    '<div class="info-card"><div class="info-card-head">Principles</div>' + princRows + '</div>' +
+    '<div style="height:8px"></div></div>';
+}
+
+if (typeof Notification !== "undefined" && Notification.permission === "default") {
+  Notification.requestPermission();
+}
+renderWorkout();
+</script>
+</body>
+</html>
