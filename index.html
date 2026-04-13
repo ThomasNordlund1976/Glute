@@ -6,44 +6,36 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Measurements">
-<meta name="theme-color" content="#0a0c10">
+<meta name="apple-mobile-web-app-title" content="GluteBuilder">
+<meta name="theme-color" content="#0d0a0e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<title>Measurements</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>GluteBuilder</title>
 <style>
-
-
-
-
-
-
-
-
-
-
-
-
 :root {
-  --bg: #0a0c10;
-  --bg2: #10131a;
-  --bg3: #161a24;
-  --surface: #1c2030;
-  --surface2: #222840;
-  --border: #2a3048;
-  --border2: #333d5a;
-  --accent: #4fc3f7;
-  --accent2: #0288d1;
-  --accent-dim: rgba(79,195,247,0.12);
-  --gold: #ffd54f;
-  --green: #69f0ae;
-  --red: #ff5252;
-  --text: #e8eaf6;
-  --text2: #8892b0;
-  --text3: #4a5578;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg: #0d0a0e;
+  --bg2: #130f14;
+  --bg3: #1a141c;
+  --surface: #201a22;
+  --surface2: #27202a;
+  --border: #332a36;
+  --border2: #3d3342;
+  --accent: #ff6eb4;
+  --accent2: #c84b8a;
+  --accent-dim: rgba(255,110,180,0.12);
+  --accent-dim2: rgba(255,110,180,0.06);
+  --gold: #f0c060;
+  --text: #f5f0f6;
+  --text2: #a090a8;
+  --text3: #5a4d60;
+  --glute: #ff6eb4;
+  --core: #f0c060;
+  --upper: #80c8ff;
+  --pump: #b088ff;
+  --rest: #3d3342;
+  --radius: 14px;
+  --radius-sm: 9px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; }
@@ -58,790 +50,783 @@ nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg2); bor
 .nav-btn svg { width: 22px; height: 22px; }
 .nav-btn.active { color: var(--accent); }
 
-/* PAGE HEADER */
+/* HEADER */
 .page-header { padding: 20px 20px 14px; padding-top: calc(20px + env(safe-area-inset-top)); position: sticky; top: 0; background: var(--bg); z-index: 50; border-bottom: 1px solid var(--border); }
-.page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 0.04em; line-height: 1; color: var(--text); }
+.page-header h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; line-height: 1.1; color: var(--text); }
 .page-header h1 span { color: var(--accent); }
-.page-header p { font-size: 12px; color: var(--text2); margin-top: 3px; font-weight: 300; }
+.page-header p { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 300; }
 
-/* LOG VIEW */
-.log-content { padding: 16px; }
+/* WEEK STRIP */
+.week-strip { display: flex; gap: 8px; padding: 14px 20px; overflow-x: auto; scrollbar-width: none; }
+.week-strip::-webkit-scrollbar { display: none; }
+.wchip { flex-shrink: 0; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.wchip.active { background: var(--accent); color: #0d0a0e; border-color: var(--accent); font-weight: 700; }
+.wchip.peak { border-color: rgba(255,110,180,0.4); }
 
-.section-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+/* WEEK BANNER */
+.week-banner { margin: 0 16px 12px; border-radius: var(--radius); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.wb-left { display: flex; flex-direction: column; gap: 2px; }
+.wb-phase { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+.wb-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.wb-stats { display: flex; gap: 14px; flex-shrink: 0; }
+.wb-stat { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.wb-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; line-height: 1; }
+.wb-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); font-family: 'DM Mono', monospace; }
 
-.entry-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
-.entry-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--border); }
-.entry-date { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; color: var(--text); }
-.entry-delete { background: none; border: none; color: var(--text3); cursor: pointer; padding: 4px; font-size: 18px; line-height: 1; }
-.entry-delete:active { color: var(--red); }
-.entry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
-.entry-cell { background: var(--surface); padding: 10px 12px; }
-.entry-cell-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; }
-.entry-cell-val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--text); margin-top: 2px; }
-.entry-cell-val.accent { color: var(--accent); }
-.entry-cell-val.gold { color: var(--gold); }
-.entry-cell-delta { font-size: 10px; font-family: 'DM Mono', monospace; margin-top: 1px; }
-.delta-up { color: var(--green); }
-.delta-down { color: var(--red); }
-.delta-neutral { color: var(--text3); }
+.p-build { background: rgba(255,110,180,0.08); border: 1px solid rgba(255,110,180,0.2); }
+.p-build .wb-phase, .p-build .wb-val { color: var(--accent); }
+.p-deload { background: rgba(240,192,96,0.07); border: 1px solid rgba(240,192,96,0.2); }
+.p-deload .wb-phase, .p-deload .wb-val { color: var(--gold); }
+.p-peak { background: rgba(176,136,255,0.08); border: 1px solid rgba(176,136,255,0.2); }
+.p-peak .wb-phase, .p-peak .wb-val { color: var(--pump); }
 
-.empty-state { text-align: center; padding: 48px 20px; color: var(--text3); font-size: 13px; }
+/* COACH NOTE */
+.coach-note { margin: 0 16px 16px; padding: 12px 14px; background: var(--surface); border-radius: var(--radius-sm); border-left: 3px solid var(--accent); font-size: 12px; color: var(--text2); line-height: 1.65; font-weight: 300; }
 
-/* ADD BUTTON */
-.fab { position: fixed; bottom: calc(72px + env(safe-area-inset-bottom)); right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 99; box-shadow: 0 4px 20px rgba(79,195,247,0.3); transition: transform 0.15s; }
-.fab:active { transform: scale(0.94); }
+/* WEEK COMPLETE */
+.week-complete-bar { margin: 0 16px 12px; padding: 10px 14px; background: rgba(255,110,180,0.1); border: 1px solid rgba(255,110,180,0.3); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--accent); font-weight: 600; }
 
-/* MODAL / FORM SHEET */
+/* DAY CARD */
+.day-section { margin: 0 16px 14px; }
+.day-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius) var(--radius) 0 0; border: 1px solid var(--border); border-bottom: none; }
+.day-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.day-day { font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; }
+.day-type { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; line-height: 1.1; flex: 1; }
+.day-sub { font-size: 10px; color: var(--text2); }
+
+.t-glute .day-type { color: var(--glute); } .t-glute .day-dot { background: var(--glute); } .t-glute .day-header { background: rgba(255,110,180,0.06); border-color: rgba(255,110,180,0.25); }
+.t-core  .day-type { color: var(--core);  } .t-core  .day-dot { background: var(--core);  } .t-core  .day-header { background: rgba(240,192,96,0.06);  border-color: rgba(240,192,96,0.25); }
+.t-upper .day-type { color: var(--upper); } .t-upper .day-dot { background: var(--upper); } .t-upper .day-header { background: rgba(128,200,255,0.06); border-color: rgba(128,200,255,0.25); }
+.t-pump  .day-type { color: var(--pump);  } .t-pump  .day-dot { background: var(--pump);  } .t-pump  .day-header { background: rgba(176,136,255,0.06); border-color: rgba(176,136,255,0.25); }
+.t-rest  .day-type { color: var(--rest);  } .t-rest  .day-dot { background: var(--rest);  } .t-rest  .day-header { background: var(--surface); border-color: var(--border); opacity: 0.5; }
+
+.ex-list { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; }
+.ex-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; gap: 10px; }
+.ex-row:last-child { border-bottom: none; }
+.ex-row:active { background: var(--surface2); }
+.ex-info { flex: 1; min-width: 0; }
+.ex-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ex-last { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
+.ex-last.has { color: var(--text2); }
+.ex-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ex-rx { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+.ex-bubble { width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text3); }
+.ex-bubble.done { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.rest-msg { padding: 14px; font-size: 12px; color: var(--text3); font-style: italic; }
+
+/* MODAL */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .overlay.open { opacity: 1; pointer-events: all; }
-.sheet { background: var(--bg2); border-radius: 20px 20px 0 0; width: 100%; max-height: 92vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
-.overlay.open .sheet { transform: translateY(0); }
-.sheet-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 0; }
-.sheet-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; color: var(--text); padding: 14px 20px 4px; }
-.sheet-sub { font-size: 12px; color: var(--text2); padding: 0 20px 14px; border-bottom: 1px solid var(--border); }
+.modal { background: var(--bg2); border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
+.overlay.open .modal { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 0; }
+.modal-head { padding: 14px 20px 12px; border-bottom: 1px solid var(--border); }
+.modal-daytype { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; cursor: pointer; border-bottom: 1px dashed rgba(255,110,180,0.35); display: inline-block; padding-bottom: 2px; }
+.modal-title-hint { font-size: 14px; color: var(--accent); vertical-align: middle; }
+.modal-sub { font-size: 12px; color: var(--text2); margin-top: 6px; font-family: 'DM Mono', monospace; }
+.modal-hint { font-size: 11px; color: var(--text3); margin-top: 5px; font-family: 'DM Mono', monospace; }
 
-/* FORM FIELDS */
-.form-section { padding: 14px 20px 0; }
-.form-section-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.form-field { display: flex; flex-direction: column; gap: 4px; }
-.form-field.full { grid-column: 1 / -1; }
-.form-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); font-family: 'DM Mono', monospace; }
-.form-label span { color: var(--text3); font-size: 9px; }
-.form-input { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; padding: 10px 12px; outline: none; -webkit-appearance: none; appearance: none; }
-.form-input:focus { border-color: var(--accent); }
+/* SET LOGGER */
+.set-logger { padding: 16px 20px; }
+.logger-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 12px; }
+.set-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.set-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); width: 36px; text-align: center; flex-shrink: 0; }
+.set-inputs { display: flex; gap: 8px; flex: 1; }
+.field-wrap { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.field-lbl { font-size: 9px; text-align: center; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+.set-input { width: 100%; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; text-align: center; padding: 10px 6px; outline: none; -webkit-appearance: none; appearance: none; }
+.set-input:focus { border-color: var(--accent); }
 input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 input[type=number] { -moz-appearance: textfield; }
-.form-actions { padding: 14px 20px 0; display: flex; flex-direction: column; gap: 8px; }
+.check-btn { width: 38px; height: 46px; border-radius: var(--radius-sm); border: 1.5px solid var(--border2); background: transparent; color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.check-btn.done { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+/* HISTORY */
+.history-sec { padding: 0 20px 16px; border-top: 1px solid var(--border); }
+.history-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; padding: 14px 0 10px; }
+.hist-entry { margin-bottom: 10px; }
+.hist-wk { font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+.hist-sets { display: flex; gap: 6px; flex-wrap: wrap; }
+.hist-set { padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); }
+.no-hist { font-size: 12px; color: var(--text3); font-style: italic; }
+
+/* MODAL ACTIONS */
+.modal-actions { padding: 8px 20px 0; display: flex; flex-direction: column; gap: 8px; }
 .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; border-radius: var(--radius); border: none; font-family: 'DM Sans', -apple-system, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-primary { background: var(--accent); color: #0a0c10; }
+.btn-primary { background: var(--accent); color: #0d0a0e; }
 .btn-ghost { background: var(--surface2); color: var(--text2); }
 
-/* TRENDS VIEW */
-.trends-content { padding: 16px; }
-.metric-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
-.metric-chip { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; cursor: pointer; white-space: nowrap; }
-.metric-chip.active { background: var(--accent); color: #0a0c10; border-color: var(--accent); font-weight: 700; }
+/* REST TIMER */
+.timer-bar { position: fixed; bottom: calc(58px + env(safe-area-inset-bottom)); left: 0; right: 0; z-index: 150; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1); }
+.timer-bar.visible { transform: translateY(0); }
+.timer-inner { margin: 0 12px 8px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 -4px 24px rgba(0,0,0,0.4); }
+.timer-ring { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring-bg { fill: none; stroke: var(--border2); stroke-width: 3; }
+.timer-ring-fg { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.timer-ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.timer-text { flex: 1; }
+.timer-label { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; letter-spacing: 0.08em; }
+.timer-countdown { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; }
+.timer-countdown.done { color: var(--accent); }
+.timer-actions { display: flex; gap: 8px; }
+.timer-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; }
+.timer-btn.accent { background: var(--accent); color: #0d0a0e; border-color: var(--accent); font-weight: 700; }
 
-.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
-.chart-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.chart-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); }
-.chart-latest { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent); line-height: 1; }
-.chart-unit { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-left: 3px; }
-.chart-delta { font-size: 11px; font-family: 'DM Mono', monospace; margin-bottom: 10px; }
-.chart-wrap { position: relative; width: 100%; height: 120px; }
-.no-data { font-size: 12px; color: var(--text3); font-style: italic; padding: 20px 0; text-align: center; }
+/* EX INFO POPUP */
+.ex-info-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.ex-info-overlay.open { opacity: 1; pointer-events: all; }
+.ex-info-popup { background: var(--bg2); border-radius: 20px 20px 0 0; width: 100%; max-height: 80vh; overflow-y: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
+.ex-info-overlay.open .ex-info-popup { transform: translateY(0); }
+.ex-info-body { padding: 16px 20px 8px; }
+.ex-info-name { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+.ex-info-muscle { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+.ex-info-section { margin-bottom: 14px; }
+.ex-info-section-title { font-size: 11px; font-weight: 600; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; font-family: 'DM Mono', monospace; }
+.ex-info-text { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 300; }
+.ex-info-tips { list-style: none; }
+.ex-info-tips li { font-size: 13px; color: var(--text2); line-height: 1.6; font-weight: 300; padding: 4px 0 4px 14px; position: relative; }
+.ex-info-tips li::before { content: ""; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 
-/* STATS */
-.stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-.stat-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
-.stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--text); line-height: 1; }
-.stat-unit { font-size: 11px; color: var(--text3); margin-left: 2px; font-family: 'DM Mono', monospace; }
-.stat-change { font-size: 11px; font-family: 'DM Mono', monospace; margin-top: 2px; }
+/* PROGRESS */
+.prog-content { padding: 16px; }
+.prog-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
+.prog-card-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.stat-row:last-child { margin-bottom: 0; }
+.stat-name { font-size: 13px; color: var(--text2); }
+.stat-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: var(--accent); line-height: 1; }
+.stat-unit { font-size: 11px; color: var(--text3); margin-left: 3px; font-family: 'DM Mono', monospace; }
+.progress-bar-wrap { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.progress-bar { height: 100%; background: var(--accent); border-radius: 3px; }
+.pr-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.pr-row:last-child { border-bottom: none; }
+.pr-ex { font-size: 12px; color: var(--text2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pr-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); flex-shrink: 0; margin-left: 12px; }
 
+/* OVERVIEW */
+.ov-content { padding: 16px; }
+.phase-card { border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-bottom: 12px; }
+.pc-head { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
+.pc-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; line-height: 1.1; }
+.pc-weeks { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); }
+.pc-body { padding: 10px 14px 14px; background: var(--surface); display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.pc-stat-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; line-height: 1; }
+.pc-stat-lbl { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.pc-note { padding: 10px 14px 12px; background: var(--surface); border-top: 1px solid var(--border); font-size: 11px; color: var(--text2); line-height: 1.6; font-weight: 300; }
+.pc-b .pc-head { background: rgba(255,110,180,0.08); } .pc-b .pc-name { color: var(--accent); }
+.pc-d .pc-head { background: rgba(240,192,96,0.07); } .pc-d .pc-name { color: var(--gold); }
+.pc-p .pc-head { background: rgba(176,136,255,0.08); } .pc-p .pc-name { color: var(--pump); }
+.info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+.info-card-head { padding: 12px 14px; background: var(--bg3); border-bottom: 1px solid var(--border); font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+.info-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+.info-row:last-child { border-bottom: none; }
+.info-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+.info-day { width: 28px; font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.info-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.info-sub { font-size: 11px; color: var(--text2); font-weight: 300; }
+.prin-row { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.prin-row:last-child { border-bottom: none; }
+.prin-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.prin-desc { font-size: 11px; color: var(--text2); line-height: 1.6; font-weight: 300; }
 ::-webkit-scrollbar { width: 0; background: transparent; }
-
-.figure-wrap { width: 100%; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; justify-content: center; align-items: center; padding: 0; overflow: visible; }
-.figure-wrap svg { width: 100%; max-width: 360px; height: auto; display: block; }
-.fig-label { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; fill: #2a3048; transition: fill 0.15s; }
-.fig-label.active { fill: #4fc3f7; }
-.fig-line { stroke: #2a3048; stroke-width: 0.8; }
-.fig-line.active { stroke: #4fc3f7; }
-
-
-.page-figure { width:100%; padding:20px 8px 12px; display:flex; justify-content:center; border-bottom:1px solid var(--border); }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; padding:16px 8px 10px; }
-
-
-.page-figure { width:100%; padding:20px 4px 12px; display:flex; justify-content:center; border-bottom:1px solid var(--border); }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; padding:16px 4px 10px; }
-
-
-.page-figure { width:100%; padding:12px 0 8px; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:var(--bg); }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; padding:12px 0 8px; background:var(--bg3); }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
-
-.page-figure { width:100%; display:flex; justify-content:center; border-bottom:1px solid var(--border); background:#0a0c10; }
-.figure-wrap { width:100%; border-bottom:1px solid var(--border); display:flex; justify-content:center; background:#0a0c10; }
-
 </style>
-</head>
 </head>
 <body>
 <div id="app">
-  <div id="v-log"    class="view"></div>
-  <div id="v-trends" class="view hidden"></div>
-  <div id="v-stats" class="view hidden"></div>
-
+  <div id="v-workout" class="view"></div>
+  <div id="v-progress" class="view hidden"></div>
+  <div id="v-overview" class="view hidden"></div>
   <nav>
-    <button class="nav-btn active" id="nb-log" onclick="setTab('log')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
-      Log
+    <button class="nav-btn active" id="nb-workout" onclick="setTab('workout')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Workout
     </button>
-    <button class="nav-btn" id="nb-trends" onclick="setTab('trends')">
+    <button class="nav-btn" id="nb-progress" onclick="setTab('progress')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Trends
+      Progress
     </button>
-    <button class="nav-btn" id="nb-stats" onclick="setTab('stats')">
+    <button class="nav-btn" id="nb-overview" onclick="setTab('overview')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Stats
+      Overview
     </button>
   </nav>
-
-  <button class="fab" id="fab" onclick="openForm()">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0c10" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-
-  <div id="overlay" class="overlay" onclick="overlayClick(event)">
-    <div id="sheet" class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">Log Measurements</div>
-      <div class="sheet-sub" id="sheet-date-label">Today</div>
-
-      <!-- BODY FIGURE -->
-      <div class="figure-wrap"><svg id="body-fig" viewBox="0 0 500 720" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;display:block;margin:0 auto;overflow:visible"><defs><filter id="etched" color-interpolation-filters="sRGB" x="0" y="0" width="1" height="1"><feComponentTransfer result="inverted"><feFuncR type="linear" slope="-1" intercept="1"/><feFuncG type="linear" slope="-1" intercept="1"/><feFuncB type="linear" slope="-1" intercept="1"/></feComponentTransfer><feColorMatrix in="inverted" type="matrix" values="0.20 0 0 0 0  0.75 0 0 0 0  1.0 0 0 0 0  0 0 0 1 0" result="colored"/><feFlood flood-color="#0a0c10" result="appbg"/><feBlend in="colored" in2="appbg" mode="screen"/></filter></defs><image href="data:image/png;base64,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" x="145" y="30" width="210" height="539" filter="url(#etched)"/><line x1="32" y1="32" x2="32" y2="567" stroke="#2a6a8a" stroke-width="1"/><line x1="27" y1="32" x2="37" y2="32" stroke="#2a6a8a" stroke-width="1.5"/><line x1="27" y1="567" x2="37" y2="567" stroke="#2a6a8a" stroke-width="1.5"/><text id="fig-height" x="28" y="302" text-anchor="middle" transform="rotate(-90,28,302)" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><circle cx="295" cy="108" r="3.5" fill="#2a6a8a" id="dot-neck"/><line x1="299" y1="108" x2="406" y2="108" stroke="#2a6a8a" stroke-width="1" id="line-neck"/><text id="fig-neck" x="412" y="105" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="120" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">neck</text><circle cx="248" cy="165" r="3.5" fill="#2a6a8a" id="dot-chest"/><line x1="252" y1="165" x2="406" y2="165" stroke="#2a6a8a" stroke-width="1" id="line-chest"/><text id="fig-chest" x="412" y="162" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="177" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">chest</text><circle cx="290" cy="238" r="3.5" fill="#2a6a8a" id="dot-waist"/><line x1="294" y1="238" x2="406" y2="238" stroke="#2a6a8a" stroke-width="1" id="line-waist"/><text id="fig-waist" x="412" y="235" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="250" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">waist</text><circle cx="295" cy="278" r="3.5" fill="#2a6a8a" id="dot-hips"/><line x1="299" y1="278" x2="406" y2="278" stroke="#2a6a8a" stroke-width="1" id="line-hips"/><text id="fig-hips" x="412" y="275" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="290" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">hips</text><circle cx="293" cy="357" r="3.5" fill="#2a6a8a" id="dot-quad"/><line x1="297" y1="357" x2="406" y2="357" stroke="#2a6a8a" stroke-width="1" id="line-quad"/><text id="fig-quad" x="412" y="354" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="369" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">quad</text><circle cx="153" cy="191" r="3.5" fill="#2a6a8a" id="dot-bicep"/><line x1="149" y1="191" x2="90" y2="191" stroke="#2a6a8a" stroke-width="1" id="line-bicep"/><text id="fig-bicep" x="84" y="188" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="84" y="203" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">bicep</text><circle cx="153" cy="255" r="3.5" fill="#2a6a8a" id="dot-forearm"/><line x1="149" y1="255" x2="90" y2="255" stroke="#2a6a8a" stroke-width="1" id="line-forearm"/><text id="fig-forearm" x="84" y="252" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="84" y="267" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">forearm</text><circle cx="183" cy="460" r="3.5" fill="#2a6a8a" id="dot-calf"/><line x1="179" y1="460" x2="90" y2="460" stroke="#2a6a8a" stroke-width="1" id="line-calf"/><text id="fig-calf" x="84" y="457" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="84" y="472" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">calf</text><line x1="170" y1="595" x2="240" y2="595" stroke="#2a6a8a" stroke-width="1" id="line-weight"/><text id="fig-weight" x="244" y="592" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="244" y="607" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">weight</text><line x1="332" y1="595" x2="262" y2="595" stroke="#2a6a8a" stroke-width="1" id="line-bodyfat"/><text id="fig-bodyfat" x="258" y="592" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="258" y="607" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">body fat</text></svg></div>
-
-      <div class="form-section">
-        <div class="form-section-title">General</div>
-        <div class="form-grid">
-          <div class="form-field">
-            <div class="form-label">Height <span>(cm)</span></div>
-            <input class="form-input" type="number" id="f-height" placeholder="185" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Weight <span>(kg)</span></div>
-            <input class="form-input" type="number" id="f-weight" placeholder="80" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field full">
-            <div class="form-label">Body Fat <span>(%)</span></div>
-            <input class="form-input" type="number" id="f-bodyfat" placeholder="15.0" inputmode="decimal" step="0.1" min="0" max="60">
-          </div>
-        </div>
+  <div class="timer-bar" id="timer-bar">
+    <div class="timer-inner">
+      <div class="timer-ring">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle class="timer-ring-bg" cx="20" cy="20" r="17"/>
+          <circle class="timer-ring-fg" id="timer-ring-fg" cx="20" cy="20" r="17" style="stroke-dasharray:106.8;stroke-dashoffset:0"/>
+        </svg>
+        <div class="timer-ring-label" id="timer-ring-label"></div>
       </div>
-
-      <div class="form-section">
-        <div class="form-section-title">Upper Body <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">(cm)</span></div>
-        <div class="form-grid">
-          <div class="form-field">
-            <div class="form-label">Neck</div>
-            <input class="form-input" type="number" id="f-neck" placeholder="38" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Chest</div>
-            <input class="form-input" type="number" id="f-chest" placeholder="100" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Bicep (L)</div>
-            <input class="form-input" type="number" id="f-bicep" placeholder="36" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Forearm (L)</div>
-            <input class="form-input" type="number" id="f-forearm" placeholder="30" inputmode="decimal" step="0.1" min="0">
-          </div>
-        </div>
+      <div class="timer-text">
+        <div class="timer-label">REST TIMER</div>
+        <div class="timer-countdown" id="timer-countdown">2:00</div>
       </div>
-
-      <div class="form-section">
-        <div class="form-section-title">Core <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">(cm)</span></div>
-        <div class="form-grid">
-          <div class="form-field">
-            <div class="form-label">Waist</div>
-            <input class="form-input" type="number" id="f-waist" placeholder="82" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Hips</div>
-            <input class="form-input" type="number" id="f-hips" placeholder="98" inputmode="decimal" step="0.1" min="0">
-          </div>
-        </div>
+      <div class="timer-actions">
+        <button class="timer-btn" onclick="startTimer()">Reset</button>
+        <button class="timer-btn accent" onclick="stopTimer()">Skip</button>
       </div>
-
-      <div class="form-section">
-        <div class="form-section-title">Lower Body <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">(cm)</span></div>
-        <div class="form-grid">
-          <div class="form-field">
-            <div class="form-label">Quad (L)</div>
-            <input class="form-input" type="number" id="f-quad" placeholder="58" inputmode="decimal" step="0.1" min="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Calf (L)</div>
-            <input class="form-input" type="number" id="f-calf" placeholder="38" inputmode="decimal" step="0.1" min="0">
-          </div>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
-        <button class="btn btn-ghost" onclick="closeForm()">Cancel</button>
-      </div>
-      <div style="height:8px"></div>
     </div>
   </div>
+  <div id="ex-info-overlay" class="ex-info-overlay" onclick="if(event.target===this)closeExInfo()">
+    <div id="ex-info-popup" class="ex-info-popup"></div>
+  </div>
+  <div id="overlay" class="overlay" onclick="overlayClick(event)">
+    <div id="modal" class="modal"></div>
+  </div>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-
-var FIGURE_HTML = '<svg id="body-fig" viewBox="0 0 500 720" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;display:block;margin:0 auto;overflow:visible"><defs><filter id="etched" color-interpolation-filters="sRGB" x="0" y="0" width="1" height="1"><feComponentTransfer result="inverted"><feFuncR type="linear" slope="-1" intercept="1"/><feFuncG type="linear" slope="-1" intercept="1"/><feFuncB type="linear" slope="-1" intercept="1"/></feComponentTransfer><feColorMatrix in="inverted" type="matrix" values="0.20 0 0 0 0  0.75 0 0 0 0  1.0 0 0 0 0  0 0 0 1 0" result="colored"/><feFlood flood-color="#0a0c10" result="appbg"/><feBlend in="colored" in2="appbg" mode="screen"/></filter></defs><image href="data:image/png;base64,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" x="145" y="30" width="210" height="539" filter="url(#etched)"/><line x1="32" y1="32" x2="32" y2="567" stroke="#2a6a8a" stroke-width="1"/><line x1="27" y1="32" x2="37" y2="32" stroke="#2a6a8a" stroke-width="1.5"/><line x1="27" y1="567" x2="37" y2="567" stroke="#2a6a8a" stroke-width="1.5"/><text id="fig-height" x="28" y="302" text-anchor="middle" transform="rotate(-90,28,302)" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><circle cx="295" cy="108" r="3.5" fill="#2a6a8a" id="dot-neck"/><line x1="299" y1="108" x2="406" y2="108" stroke="#2a6a8a" stroke-width="1" id="line-neck"/><text id="fig-neck" x="412" y="105" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="120" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">neck</text><circle cx="248" cy="165" r="3.5" fill="#2a6a8a" id="dot-chest"/><line x1="252" y1="165" x2="406" y2="165" stroke="#2a6a8a" stroke-width="1" id="line-chest"/><text id="fig-chest" x="412" y="162" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="177" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">chest</text><circle cx="290" cy="238" r="3.5" fill="#2a6a8a" id="dot-waist"/><line x1="294" y1="238" x2="406" y2="238" stroke="#2a6a8a" stroke-width="1" id="line-waist"/><text id="fig-waist" x="412" y="235" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="250" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">waist</text><circle cx="295" cy="278" r="3.5" fill="#2a6a8a" id="dot-hips"/><line x1="299" y1="278" x2="406" y2="278" stroke="#2a6a8a" stroke-width="1" id="line-hips"/><text id="fig-hips" x="412" y="275" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="290" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">hips</text><circle cx="293" cy="357" r="3.5" fill="#2a6a8a" id="dot-quad"/><line x1="297" y1="357" x2="406" y2="357" stroke="#2a6a8a" stroke-width="1" id="line-quad"/><text id="fig-quad" x="412" y="354" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="412" y="369" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">quad</text><circle cx="153" cy="191" r="3.5" fill="#2a6a8a" id="dot-bicep"/><line x1="149" y1="191" x2="90" y2="191" stroke="#2a6a8a" stroke-width="1" id="line-bicep"/><text id="fig-bicep" x="84" y="188" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="84" y="203" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">bicep</text><circle cx="153" cy="255" r="3.5" fill="#2a6a8a" id="dot-forearm"/><line x1="149" y1="255" x2="90" y2="255" stroke="#2a6a8a" stroke-width="1" id="line-forearm"/><text id="fig-forearm" x="84" y="252" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="84" y="267" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">forearm</text><circle cx="183" cy="460" r="3.5" fill="#2a6a8a" id="dot-calf"/><line x1="179" y1="460" x2="90" y2="460" stroke="#2a6a8a" stroke-width="1" id="line-calf"/><text id="fig-calf" x="84" y="457" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="84" y="472" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">calf</text><line x1="170" y1="595" x2="240" y2="595" stroke="#2a6a8a" stroke-width="1" id="line-weight"/><text id="fig-weight" x="244" y="592" text-anchor="end" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="244" y="607" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">weight</text><line x1="332" y1="595" x2="262" y2="595" stroke="#2a6a8a" stroke-width="1" id="line-bodyfat"/><text id="fig-bodyfat" x="258" y="592" font-family="DM Mono,monospace" font-size="15" font-weight="500" fill="#2a6a8a">--</text><text x="258" y="607" font-family="DM Mono,monospace" font-size="10" fill="#cc3333">body fat</text></svg>';
-
-var FIELDS = [
-  {id:"height",  label:"Height",  unit:"cm",  section:"general",  color:"#4fc3f7"},
-  {id:"weight",  label:"Weight",  unit:"kg",  section:"general",  color:"#ffd54f"},
-  {id:"bodyfat", label:"Body Fat",unit:"%",   section:"general",  color:"#ff5252"},
-  {id:"neck",    label:"Neck",    unit:"cm",  section:"upper",    color:"#4fc3f7"},
-  {id:"chest",   label:"Chest",   unit:"cm",  section:"upper",    color:"#4fc3f7"},
-  {id:"bicep",   label:"Bicep",   unit:"cm",  section:"upper",    color:"#69f0ae"},
-  {id:"forearm", label:"Forearm", unit:"cm",  section:"upper",    color:"#69f0ae"},
-  {id:"waist",   label:"Waist",   unit:"cm",  section:"core",     color:"#ffd54f"},
-  {id:"hips",    label:"Hips",    unit:"cm",  section:"core",     color:"#ffd54f"},
-  {id:"quad",    label:"Quad",    unit:"cm",  section:"lower",    color:"#b388ff"},
-  {id:"calf",    label:"Calf",    unit:"cm",  section:"lower",    color:"#b388ff"},
+var SPLIT = [
+  {day:"A", type:"glute", label:"Glute Focus", sub:"Primary glute + hamstring session", ex:[
+    "Barbell Hip Thrust","Smith Machine RDL","DB Bulgarian Split Squat","Cable Kickback","Abduction Machine","Leg Curl","Glute Bridge Pulse"
+  ]},
+  {day:"B", type:"core", label:"Glute + Core", sub:"Glutes, stability and core strength", ex:[
+    "Smith Machine Hip Thrust","Back Extension","Sumo Deadlift","Copenhagen Plank","Dead Bug","Cable Pull Through","Pallof Press"
+  ]},
+  {day:"C", type:"upper", label:"Upper Tone", sub:"Tone without bulk - push and pull", ex:[
+    "Lat Pulldown","Seated Cable Row","DB Shoulder Press","Cable Lateral Raise","Incline DB Press","Tricep Rope Pushdown","Face Pulls"
+  ]},
+  {day:"D", type:"pump", label:"Glute Pump", sub:"Optional 4th day - isolation finishers", ex:[
+    "Hip Thrust Machine","Curtsy Lunge","Cable Abduction","Seated Abduction Machine","Reverse Hyperextension","Banded Clamshell","Donkey Kick Cable"
+  ]}
 ];
 
-var chartInstances = {};
-var activeMetrics = ["weight","bodyfat","chest","waist","hips","bicep","quad"];
-var curTab = "log";
+var WEEKS = [
+  {n:1,  phase:"Build",  pc:"p-build",  sets:3, reps:"12-15", rir:"3 RIR", days:3, note:"Week 1 - learn the movements and find your starting weights. Focus on feeling the glute contract on every rep."},
+  {n:2,  phase:"Build",  pc:"p-build",  sets:3, reps:"12-15", rir:"2 RIR", days:3, note:"Add weight or reps wherever possible. You should feel your glutes the next day - that is a good sign."},
+  {n:3,  phase:"Build",  pc:"p-build",  sets:3, reps:"12-15", rir:"2 RIR", days:3, note:"Same structure, keep progressing load. Start adding Day D as a 4th optional session if energy allows."},
+  {n:4,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-15", rir:"2 RIR", days:4, note:"4 sets now. Increase load on hip thrusts and split squats - these are your primary drivers."},
+  {n:5,  phase:"Deload", pc:"p-deload", sets:2, reps:"12-15", rir:"5 RIR", days:3, note:"Deload week - 2 sets, lighter weights, 3 sessions only. Your muscles repair and grow during this week."},
+  {n:6,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-12", rir:"2 RIR", days:4, note:"Phase 2 begins. Slightly heavier, slightly fewer reps. Hip thrust should increase significantly from Week 4."},
+  {n:7,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-12", rir:"1 RIR", days:4, note:"Push the last set of each exercise close to failure. This is where shape really starts to change."},
+  {n:8,  phase:"Build",  pc:"p-build",  sets:4, reps:"10-12", rir:"1 RIR", days:4, note:"Maintain the load increases. Take progress photos this week - compare to Week 1."},
+  {n:9,  phase:"Build",  pc:"p-build",  sets:4, reps:"8-12",  rir:"1 RIR", days:4, note:"Increase hip thrust weight. Last set of Bulgarian split squat and RDL to near failure."},
+  {n:10, phase:"Deload", pc:"p-deload", sets:2, reps:"12-15", rir:"5 RIR", days:3, note:"Second deload. Same rules - lighter, fewer sets, 3 days. Do not skip this."},
+  {n:11, phase:"Peak",   pc:"p-peak",   sets:5, reps:"8-12",  rir:"1 RIR", days:4, note:"Peak phase - 5 sets on primary exercises. Last set of hip thrust and split squat to 0-1 RIR."},
+  {n:12, phase:"Peak",   pc:"p-peak",   sets:5, reps:"8-12",  rir:"0 RIR", days:4, note:"Final week. Last set of every exercise to true failure. Take final progress photos. You earned this."}
+];
 
-function dbLoad() { try { return JSON.parse(localStorage.getItem("measurements_v1") || "[]"); } catch(e) { return []; } }
-function dbSave(d) { try { localStorage.setItem("measurements_v1", JSON.stringify(d)); } catch(e) {} }
+var PHASE_CARDS = [
+  {cls:"pc-b", name:"Build Phase",  weeks:"Weeks 1-4, 6-9", sets:"3-4", reps:"10-15", rir:"1-3", note:"Progressive overload every session. Hip thrusts and Bulgarian split squats are your primary growth drivers - prioritize load increases here."},
+  {cls:"pc-d", name:"Deload",       weeks:"Weeks 5 + 10",   sets:"2",   reps:"12-15", rir:"5",   note:"Mandatory recovery. 10-15% lighter, 2 sets only. This is where muscles repair and shape improves - do not skip."},
+  {cls:"pc-p", name:"Peak",         weeks:"Weeks 11-12",    sets:"5",   reps:"8-12",  rir:"0-1", note:"Maximum stimulus. 5 sets on every exercise. Last set goes to or near true failure. This is the peak of the program."}
+];
+
+var PRINCIPLES = [
+  ["Mind-Muscle Connection", "On every glute exercise, actively squeeze the glute at the top of the movement. If you cannot feel it working, the weight may be too heavy or form needs adjustment."],
+  ["Hip Thrust Priority",    "The barbell hip thrust is your most important exercise. Treat it like a squat or deadlift - track it weekly, increase load consistently, and warm up properly."],
+  ["Progressive Overload",   "Add weight or reps every session. Small increases are fine - even 1kg more on hip thrusts per week adds up to 12kg over this program."],
+  ["Protein Intake",         "To build glute muscle without adding unwanted mass elsewhere, aim for 1.6-2g protein per kg bodyweight. This supports muscle growth while keeping total calories in check."],
+  ["Hip Dips",               "Hip dips are structural - caused by bone shape - but building the glute medius (side glute) fills them in significantly. Abduction exercises and side-lying movements target this directly."],
+  ["Upper Body Approach",    "Day C is designed to tone and strengthen without adding bulk. Keep weights moderate, rep ranges higher (12-15), and never push upper body sets to failure."],
+  ["Rest Periods",           "Glute exercises: 2-3 min between sets. Isolation work (cables, abductions): 60-90 sec. Hip thrusts specifically need full recovery between sets."]
+];
+
+var EX_INFO = {
+  "Barbell Hip Thrust": {muscle:"Glutes (max)", exec:"Sit with upper back against bench, barbell over hips with pad. Drive hips up explosively, squeeze glutes hard at the top. Hold 1-2 seconds. Lower with control.", tips:["Chin tucked - do not hyperextend your neck","Drive through your heels, not your toes","Squeeze glutes at the top - hold for 1-2 seconds","Knees stay at 90 degrees at the top - not caving in","This is your most important exercise - train it heavy"]},
+  "Smith Machine RDL":  {muscle:"Hamstrings / Glutes", exec:"Stand hip-width, soft knees. Hinge at hips pushing them back, bar stays close to legs. Lower until you feel a deep hamstring stretch, then drive hips forward to return.", tips:["This is a hip hinge - not a squat","Feel the hamstring stretch - that is the cue to reverse","Keep spine neutral - no rounding of lower back","Smith machine path helps beginners stay controlled","Go slow on the way down - 3 second eccentric"]},
+  "DB Bulgarian Split Squat": {muscle:"Glutes / Quads", exec:"Rear foot elevated on bench, dumbbells in hands. Lower back knee toward floor keeping front shin vertical. Drive through front heel to stand.", tips:["Front foot far enough forward that shin stays vertical","Lower slowly - 2-3 seconds down","Drive through your heel to emphasize glutes over quads","Keep torso upright or slightly forward leaning","This will be uncomfortable at first - persist through it"]},
+  "Cable Kickback":     {muscle:"Glutes (isolation)", exec:"Ankle strap on low cable. Hinge slightly forward, kick leg back until fully extended. Squeeze glute hard at top. Control return.", tips:["Do not swing or use momentum","Lead with the heel, not the toe","Squeeze hard at the top for 1 second","Keep slight forward hinge throughout","Go light - this is an isolation finisher"]},
+  "Abduction Machine":  {muscle:"Glute Medius (hip dips)", exec:"Sit in machine, pads on inner knees. Push knees apart as wide as possible. Hold 1 second. Slowly return - do not let weight crash.", tips:["This targets the glute medius - critical for hip dip reduction","Slow controlled negative is key","Full range of motion - push as wide as possible","Lean forward slightly for more glute med activation","Go higher reps here - 15-20 works well"]},
+  "Leg Curl":           {muscle:"Hamstrings", exec:"Lie prone, pad behind ankles. Curl heels toward glutes as far as possible. Squeeze for 1 second. Lower with 3 second eccentric.", tips:["Plantar flex feet (point toes) for more activation","Full range - heels to glutes","Slow 3 second negative is critical","Do not let hips rise off the pad","Keep this as a complement to RDLs, not a replacement"]},
+  "Glute Bridge Pulse": {muscle:"Glutes (burnout)", exec:"Bodyweight or light barbell. Hold at the top position and pulse with small 2-3 cm movements. Keep constant tension on glutes. 20-30 pulses.", tips:["This is a finisher - done last in the session","Constant tension - never fully lower","Squeeze as hard as possible throughout","Can add a resistance band above knees","Feel the burn - this is normal and productive"]},
+  "Smith Machine Hip Thrust": {muscle:"Glutes (variation)", exec:"Same as barbell hip thrust but using Smith machine bar. The fixed path allows you to focus purely on the glute squeeze.", tips:["Great option when the barbell is taken","Can go slightly heavier than free barbell due to stability","Same cues - squeeze at top, chin tucked, heels down","Vary between barbell and Smith for stimulus variation"]},
+  "Back Extension":     {muscle:"Glutes / Hamstrings / Erectors", exec:"Lie in hyperextension machine at 45 degrees. Round slightly, lower until stretched. Drive hips forward and squeeze glutes at top.", tips:["With a rounded back at the bottom you get more hamstring stretch","Drive hips into the pad at the top for glute emphasis","Can hold a weight plate to add resistance","Do not hyperextend at the top - stop when spine is neutral"]},
+  "Sumo Deadlift":      {muscle:"Glutes / Inner Thighs / Hamstrings", exec:"Wide stance, toes pointed out. Grip bar inside legs. Drive hips through and squeeze glutes hard at lockout.", tips:["Wide stance and toes out shifts more emphasis to glutes","Keep chest up and back straight throughout","Drive knees out over toes throughout the movement","Squeeze glutes hard at lockout - do not just stand up"]},
+  "Copenhagen Plank":   {muscle:"Inner Thighs / Core / Hip Stabilizers", exec:"Side plank with top leg on a bench. Hold position. Can do as static hold or add raises with bottom leg.", tips:["This directly targets hip adductors - great for hip stability","Start with shorter holds and build up","Helps with hip dip appearance over time","Keep hips stacked and body in a straight line"]},
+  "Dead Bug":           {muscle:"Deep Core / Transverse Abdominus", exec:"Lie on back, arms up, knees at 90 degrees. Slowly lower opposite arm and leg toward floor without lower back lifting. Return. Alternate.", tips:["Lower back MUST stay pressed into floor throughout","Move slowly and with full control","Breathe out as you lower limbs","This is one of the best core exercises for women - no risk of thickening the waist"]},
+  "Cable Pull Through": {muscle:"Glutes / Hamstrings", exec:"Face away from low cable, rope between legs. Hinge forward pushing hips back until stretch felt. Drive hips forward squeezing glutes.", tips:["Great hip hinge pattern teacher","Focus on driving hips through - not pulling with arms","Squeeze glutes hard at the top","Lighter weight with perfect form beats heavy and sloppy"]},
+  "Pallof Press":       {muscle:"Core Anti-Rotation / Obliques", exec:"Stand sideways to cable. Hold handle at chest, press out to full extension, hold 2 seconds, return. The key is resisting rotation.", tips:["Do not rotate - fight the cable pulling you","Stand tall, brace your core throughout","This builds core stability not size - great for women","Keep breathing - do not hold your breath"]},
+  "Lat Pulldown":       {muscle:"Lats / Biceps", exec:"Grip bar slightly wider than shoulders. Pull to upper chest driving elbows down. Lean back slightly. Full stretch at top.", tips:["Drive elbows to back pockets - not hands to chest","Keep chest up throughout","Full stretch at top - arms fully extended","Moderate weight - this is toning not building"]},
+  "Seated Cable Row":   {muscle:"Mid Back / Rear Delts", exec:"Pull handle to lower chest, drive elbows back. Pause at peak. Return to full stretch.", tips:["Squeeze shoulder blades together at peak","Keep torso upright - minimal lean","Full stretch forward is key","Medium-high reps keep this toning focused"]},
+  "DB Shoulder Press":  {muscle:"Shoulders", exec:"Seated, dumbbells at ear height. Press overhead to near lockout. Lower to ear level under control.", tips:["Keep weight moderate - we do not want shoulder growth","Do not flare elbows excessively","Control the descent fully","12-15 reps keeps this in the toning range"]},
+  "Cable Lateral Raise":{muscle:"Side Delts", exec:"Single arm cable from low position. Raise arm out to shoulder height. Control descent.", tips:["Light weight - this is toning","Full range of motion","Slow controlled movement throughout","No momentum - pure muscle control"]},
+  "Incline DB Press":   {muscle:"Upper Chest", exec:"30-45 degree bench. Lower dumbbells to upper chest, press to lockout.", tips:["Moderate weight for toning","Full range of motion","Elbows at 45-75 degrees","Keep reps in the 12-15 range"]},
+  "Tricep Rope Pushdown":{muscle:"Triceps", exec:"High cable, rope attachment. Push down to full extension, spreading rope at the bottom. Slow return.", tips:["Keep elbows pinned at sides","Full extension at the bottom","This tones the back of the arm - very popular exercise for this reason","No need to go heavy - 12-15 reps"]},
+  "Face Pulls":         {muscle:"Rear Delts / External Rotators", exec:"Cable at face height, rope. Pull to forehead with elbows high. Externally rotate at peak.", tips:["Essential for shoulder health","Keep elbows high throughout","Light weight, perfect form","Great for posture and shoulder stability"]},
+  "Hip Thrust Machine": {muscle:"Glutes", exec:"Follow machine setup instructions. Drive hips up, squeeze glutes hard at top for 1-2 seconds. Controlled descent.", tips:["If your gym has a dedicated hip thrust machine - use it","Same cues as barbell: squeeze at top, chin down","Great for tracking load progression","Can go heavier than barbell due to stability"]},
+  "Curtsy Lunge":       {muscle:"Glutes / Glute Medius / Inner Thigh", exec:"Step one foot back and across behind the other. Lower back knee toward floor. Return to start. Alternate.", tips:["This targets glute medius which reduces hip dip appearance","Keep chest upright","Control the movement - no rushing","Great shape builder for the outer glute area"]},
+  "Cable Abduction":    {muscle:"Glute Medius", exec:"Ankle strap on low cable, stand sideways. Raise leg out to the side. Control return. Do not let cable pull leg across body.", tips:["Pure glute medius isolation","Light weight, full range of motion","Squeeze at the top of each rep","This directly addresses hip dip appearance over time"]},
+  "Seated Abduction Machine": {muscle:"Glute Medius / Outer Glutes", exec:"Sit in machine. Push knees apart to maximum. Hold 1 second. Controlled return.", tips:["Lean forward for more glute medius activation","Full range every rep","This is your hip dip reduction tool - take it seriously","Higher reps (15-20) work best here"]},
+  "Reverse Hyperextension": {muscle:"Glutes / Hamstrings / Lower Back", exec:"Lie face down on machine, hold handles. Raise legs behind you squeezing glutes at top. Lower with control.", tips:["Excellent glute developer with minimal lower back stress","Squeeze hard at the top - pause 1 second","Keep movement controlled - no swinging","Great for building the lower glute area"]},
+  "Banded Clamshell":   {muscle:"Glute Medius", exec:"Lie on side, band above knees, knees bent. Keeping feet together, raise top knee as high as possible. Lower with control.", tips:["This is a hip dip targeting exercise","Keep hips stacked - do not roll back","Move slowly and feel the glute medius work","Good as a warmup or finisher"]},
+  "Donkey Kick Cable":  {muscle:"Glutes", exec:"On all fours, ankle strap on cable. Kick leg back and up, squeezing glute at top. Lower with control.", tips:["Squeeze glute hard at the top","Do not rotate the hip - kick straight back","Keep core engaged throughout","Great pump exercise as a finisher"]}
+};
+
+var DOT = {glute:"#ff6eb4", core:"#f0c060", upper:"#80c8ff", pump:"#b088ff", rest:"#3d3342"};
+var curTab  = "workout";
+var curWeek = 1;
+var timerDuration = 120;
+var timerRemaining = 0;
+var timerInterval = null;
+
+function dbLoad() { try { return JSON.parse(localStorage.getItem("glute12w") || "{}"); } catch(e) { return {}; } }
+function dbSave(db) { try { localStorage.setItem("glute12w", JSON.stringify(db)); } catch(e) {} }
+function dbKey(w, ex) { return "w" + w + "_" + ex; }
+function dbGet(db, w, ex) { return db[dbKey(w, ex)] || null; }
+function dbSet(db, w, ex, val) { db[dbKey(w, ex)] = val; dbSave(db); }
+
+function getHistory(db, ex) {
+  var out = [];
+  for (var w = 1; w <= 12; w++) {
+    var d = dbGet(db, w, ex);
+    if (d && d.sets) {
+      var has = false;
+      for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].kg || d.sets[i].reps) { has = true; break; } }
+      if (has) out.push({week:w, sets:d.sets, date:d.date||""});
+    }
+  }
+  return out;
+}
+function getLastPerf(db, week, ex) {
+  for (var w = week - 1; w >= 1; w--) {
+    var d = dbGet(db, w, ex);
+    if (d && d.sets) {
+      var done = [];
+      for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].kg || d.sets[i].reps) done.push(d.sets[i]); }
+      if (done.length) return {week:w, sets:done};
+    }
+  }
+  return null;
+}
+function getDone(db, week, ex) {
+  var d = dbGet(db, week, ex);
+  if (!d || !d.sets) return 0;
+  var c = 0;
+  for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].done) c++; }
+  return c;
+}
 function g(id) { return document.getElementById(id); }
 
 function setTab(tab) {
   curTab = tab;
-  ["log","trends","stats"].forEach(function(t) {
-    g("nb-"+t).classList.toggle("active", t===tab);
-    var v = g("v-"+t);
-    if (t===tab) v.classList.remove("hidden"); else v.classList.add("hidden");
+  ["workout","progress","overview"].forEach(function(t) {
+    g("nb-" + t).classList.toggle("active", t === tab);
+    var v = g("v-" + t);
+    if (t === tab) v.classList.remove("hidden"); else v.classList.add("hidden");
   });
-  g("fab").style.display = tab==="log" ? "flex" : "none";
-  if (tab==="log") renderLog();
-  if (tab==="trends") renderTrends();
-  if (tab==="stats") renderStats();
+  if (tab === "workout")  renderWorkout();
+  if (tab === "progress") renderProgress();
+  if (tab === "overview") renderOverview();
 }
 
-function formatDate(iso) {
-  var d = new Date(iso);
-  var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return days[d.getDay()] + " " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
-}
+function selectWeek(n) { curWeek = n; renderWorkout(); }
 
-function today() {
-  var d = new Date();
-  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-}
+function renderWorkout() {
+  var db = dbLoad();
+  var wk = WEEKS[curWeek - 1];
 
-function delta(cur, prev, invert) {
-  if (prev == null || cur == null) return "";
-  var diff = parseFloat((cur - prev).toFixed(1));
-  if (diff === 0) return '<span class="delta-neutral">no change</span>';
-  var sign = diff > 0 ? "+" : "";
-  var good = invert ? diff < 0 : diff > 0;
-  var cls = good ? "delta-up" : "delta-down";
-  return '<span class="' + cls + '">' + sign + diff + '</span>';
-}
-
-
-function renderLog() {
-  var data = dbLoad();
-  data.sort(function(a,b){ return b.date.localeCompare(a.date); });
-
-  if (!data.length) {
-    g("v-log").innerHTML =
-      '<div class="page-header"><h1>BODY <span>TRACKER</span></h1><p>No entries yet</p></div>' +
-      '<div class="page-figure">' + FIGURE_HTML + '</div>' +
-      '<div style="text-align:center;padding:12px 20px 24px;font-size:13px;color:var(--text3)">Tap + to log your first measurements</div>';
-    updateFigureLabels();
-    return;
+  var chips = "";
+  for (var i = 0; i < WEEKS.length; i++) {
+    var w = WEEKS[i];
+    chips += '<button class="wchip' + (w.n === curWeek ? " active" : "") + (w.phase==="Peak"?" peak":"") + '" onclick="selectWeek(' + w.n + ')">W' + w.n + '</button>';
   }
 
-  var html = '<div class="page-header"><h1>BODY <span>TRACKER</span></h1><p>' + data.length + ' entr' + (data.length===1?"y":"ies") + ' logged</p></div>' +
-    '<div class="page-figure">' + FIGURE_HTML + '</div>' +
-    '<div class="log-content">';
+  var banner = '<div class="week-banner ' + wk.pc + '">' +
+    '<div class="wb-left"><div class="wb-phase">' + wk.phase + '</div><div class="wb-title">Week ' + wk.n + ' of 12</div></div>' +
+    '<div class="wb-stats">' +
+      '<div class="wb-stat"><div class="wb-val">' + wk.sets + '</div><div class="wb-lbl">Sets</div></div>' +
+      '<div class="wb-stat"><div class="wb-val">' + wk.reps + '</div><div class="wb-lbl">Reps</div></div>' +
+      '<div class="wb-stat"><div class="wb-val">' + wk.days + '</div><div class="wb-lbl">Days</div></div>' +
+    '</div></div>';
 
-  data.forEach(function(entry, idx) {
-    var prev = data[idx+1] || null;
-    html += '<div class="entry-card">';
-    html += '<div class="entry-header">';
-    html += '<div class="entry-date">' + formatDate(entry.date) + '</div>';
-    html += '<button class="entry-delete" onclick="deleteEntry(\'' + entry.date + '\')">&#x2715;</button>';
-    html += '</div>';
-    html += '<div class="entry-grid">';
+  var activeSplit = wk.days >= 4 ? SPLIT : SPLIT.slice(0, 3);
+  var allEx = [];
+  for (var di = 0; di < activeSplit.length; di++) { for (var ei = 0; ei < activeSplit[di].ex.length; ei++) allEx.push(activeSplit[di].ex[ei]); }
+  var weekDone = allEx.length > 0 && allEx.every(function(ex) { return getDone(db, curWeek, ex) >= wk.sets; });
 
-    FIELDS.forEach(function(f) {
-      var val = entry[f.id];
-      if (val == null || val === "") return;
-      var prevVal = prev ? prev[f.id] : null;
-      var d = delta(val, prevVal, f.id==="bodyfat"||f.id==="waist"||f.id==="hips");
-      var valClass = f.id==="weight"?"gold":f.id==="bodyfat"?"":"accent";
-      html += '<div class="entry-cell">';
-      html += '<div class="entry-cell-label">' + f.label + '</div>';
-      html += '<div class="entry-cell-val ' + valClass + '">' + val + '<span style="font-size:9px;color:var(--text3);margin-left:2px">' + f.unit + '</span></div>';
-      if (d) html += '<div class="entry-cell-delta">' + d + '</div>';
-      html += '</div>';
-    });
-
-    html += '</div></div>';
-  });
-
-  html += '</div>';
-  g("v-log").innerHTML = html;
-  updateFigureLabels();
-}
-
-function deleteEntry(date) {
-  var data = dbLoad().filter(function(e){ return e.date !== date; });
-  dbSave(data);
-  renderLog();
-  if (curTab === "trends") renderTrends();
-}
-
-function openForm() {
-  var now = today();
-  g("sheet-date-label").textContent = formatDate(now);
-  var data = dbLoad();
-  var existing = data.find(function(e){ return e.date === now; });
-  FIELDS.forEach(function(f) {
-    var el = g("f-" + f.id);
-    if (el) el.value = existing && existing[f.id] != null ? existing[f.id] : "";
-  });
-  g("overlay").classList.add("open");
-  updateFigureLabels();
-}
-
-function updateFigureLabels() {
-  var VAL_COLOR  = "#e8f8ff";
-  var LINE_COLOR = "#4fc3f7";
-  var DIM        = "#2a6080";
-  var data   = dbLoad();
-  var latest = null;
-  if (data.length) {
-    data.sort(function(a,b){ return b.date.localeCompare(a.date); });
-    latest = data[0];
-  }
-  var fids = ["height","weight","bodyfat","neck","chest","bicep","forearm","waist","hips","quad","calf"];
-  fids.forEach(function(fid) {
-    var field = FIELDS.find(function(f){ return f.id === fid; });
-    var unit  = field ? " " + field.unit : "";
-    var inp   = document.getElementById("f-" + fid);
-    var val   = inp && inp.value ? inp.value : (latest && latest[fid] != null ? String(latest[fid]) : null);
-    var display = val ? val + unit : "--";
-    var color   = val ? VAL_COLOR : DIM;
-    document.querySelectorAll("[id=fig-" + fid + "]").forEach(function(el) {
-      el.textContent = display;
-      el.setAttribute("fill", color);
-    });
-    var dot = document.getElementById("dot-" + fid);
-    if (dot) dot.setAttribute("fill", val ? LINE_COLOR : DIM);
-    var line = document.getElementById("line-" + fid);
-    if (line) line.setAttribute("stroke", val ? LINE_COLOR : DIM);
-  });
-}
-
-function closeForm() { g("overlay").classList.remove("open"); }
-function overlayClick(e) { if (e.target === g("overlay")) closeForm(); }
-
-function saveEntry() {
-  var now = today();
-  var data = dbLoad().filter(function(e){ return e.date !== now; });
-  var entry = { date: now };
-  var hasData = false;
-  FIELDS.forEach(function(f) {
-    var el = g("f-" + f.id);
-    if (el && el.value !== "") {
-      entry[f.id] = parseFloat(el.value);
-      hasData = true;
+  var days = "";
+  for (var d = 0; d < activeSplit.length; d++) {
+    var day = activeSplit[d];
+    var rows = "";
+    for (var e = 0; e < day.ex.length; e++) {
+      var ex = day.ex[e];
+      var done = getDone(db, curWeek, ex);
+      var isDone = done >= wk.sets;
+      var last = getLastPerf(db, curWeek, ex);
+      var lastStr = "No previous data";
+      if (last && last.sets.length) {
+        var maxKg = 0;
+        for (var s = 0; s < last.sets.length; s++) { if (last.sets[s].kg && +last.sets[s].kg > maxKg) maxKg = +last.sets[s].kg; }
+        lastStr = "Wk" + last.week + ": " + (maxKg > 0 ? maxKg + " kg" : "--");
+      }
+      var safeEx = encodeURIComponent(ex);
+      rows += '<div class="ex-row" onclick="openModal(\'' + safeEx + '\',\'' + day.type + '\')">' +
+        '<div class="ex-info"><div class="ex-name">' + ex + '</div><div class="ex-last' + (last?" has":"") + '">' + lastStr + '</div></div>' +
+        '<div class="ex-right"><div class="ex-rx">' + wk.sets + 'x' + wk.reps + '</div><div class="ex-bubble' + (isDone?" done":"") + '">' + done + '/' + wk.sets + '</div></div>' +
+      '</div>';
     }
-  });
-  if (!hasData) { closeForm(); return; }
-  data.push(entry);
-  dbSave(data);
-  closeForm();
-  renderLog();
-  if (curTab === "trends") renderTrends();
-}
-
-function renderTrends() {
-  var data = dbLoad();
-  data.sort(function(a,b){ return a.date.localeCompare(b.date); });
-
-  var html = '<div class="page-header"><h1>TRENDS <span>&amp; PROGRESS</span></h1><p>All measurements over time</p></div>';
-  html += '<div class="trends-content">';
-
-  if (!data.length) {
-    html += '<div class="empty-state"><p>No data yet. Log measurements in the Log tab.</p></div></div>';
-    g("v-trends").innerHTML = html;
-    return;
+    days += '<div class="day-section">' +
+      '<div class="day-header t-' + day.type + '">' +
+        '<div class="day-dot"></div>' +
+        '<div class="day-day">DAY ' + day.day + '</div>' +
+        '<div class="day-type">' + day.label + '</div>' +
+        '<div class="day-sub">' + day.sub + '</div>' +
+      '</div>' +
+      '<div class="ex-list">' + rows + '</div></div>';
   }
 
-  html += '<div class="section-title">Select metrics</div>';
-  html += '<div class="metric-selector">';
-  FIELDS.forEach(function(f) {
-    var isActive = activeMetrics.indexOf(f.id) !== -1;
-    html += '<button class="metric-chip' + (isActive?" active":"") + '" onclick="toggleMetric(\'' + f.id + '\')">' + f.label + '</button>';
-  });
-  html += '</div>';
-
-  var latest = data[data.length-1];
-  var first  = data[0];
-  var hasMultiple = data.length > 1;
-
-  html += '<div class="stats-grid">';
-  html += '<div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val">' + data.length + '</div></div>';
-
-  var daySpan = 0;
-  if (hasMultiple) {
-    var d1 = new Date(first.date); var d2 = new Date(latest.date);
-    daySpan = Math.round((d2-d1)/(1000*60*60*24));
-  }
-  html += '<div class="stat-card"><div class="stat-label">Span</div><div class="stat-val">' + (daySpan>0?daySpan:"--") + '<span class="stat-unit">days</span></div></div>';
-
-  if (latest.weight) {
-    var wChange = hasMultiple && first.weight ? parseFloat((latest.weight - first.weight).toFixed(1)) : null;
-    html += '<div class="stat-card"><div class="stat-label">Current weight</div><div class="stat-val">' + latest.weight + '<span class="stat-unit">kg</span></div>' +
-      (wChange!=null?'<div class="stat-change ' + (wChange<0?"delta-up":"delta-down") + '">' + (wChange>0?"+":"") + wChange + ' kg total</div>':'') + '</div>';
-  }
-  if (latest.bodyfat) {
-    var bfChange = hasMultiple && first.bodyfat ? parseFloat((latest.bodyfat - first.bodyfat).toFixed(1)) : null;
-    html += '<div class="stat-card"><div class="stat-label">Body fat</div><div class="stat-val">' + latest.bodyfat + '<span class="stat-unit">%</span></div>' +
-      (bfChange!=null?'<div class="stat-change ' + (bfChange<0?"delta-up":"delta-down") + '">' + (bfChange>0?"+":"") + bfChange + '% total</div>':'') + '</div>';
-  }
-  html += '</div>';
-
-  FIELDS.forEach(function(f) {
-    if (activeMetrics.indexOf(f.id) === -1) return;
-    var pts = data.filter(function(e){ return e[f.id] != null; });
-    if (!pts.length) return;
-
-    var latestVal = pts[pts.length-1][f.id];
-    var firstVal  = pts[0][f.id];
-    var change    = pts.length>1 ? parseFloat((latestVal - firstVal).toFixed(1)) : null;
-    var isGoodDown = (f.id==="bodyfat"||f.id==="waist"||f.id==="hips");
-    var changeClass = change==null?"":( (change<0&&isGoodDown)||(change>0&&!isGoodDown) ? "delta-up":"delta-down");
-
-    html += '<div class="chart-card">';
-    html += '<div class="chart-header">';
-    html += '<div class="chart-title">' + f.label + '</div>';
-    html += '<div><span class="chart-latest">' + latestVal + '</span><span class="chart-unit">' + f.unit + '</span></div>';
-    html += '</div>';
-    if (change !== null) {
-      var sign = change>0?"+":"";
-      html += '<div class="chart-delta ' + changeClass + '">' + sign + change + ' ' + f.unit + ' since first entry</div>';
-    }
-
-    if (pts.length < 2) {
-      html += '<div class="no-data">Only 1 data point -- add more entries to see trends</div>';
-    } else {
-      html += '<div class="chart-wrap"><canvas id="chart-' + f.id + '"></canvas></div>';
-    }
-    html += '</div>';
-  });
-
-  html += '</div>';
-  g("v-trends").innerHTML = html;
+  g("v-workout").innerHTML =
+    '<div class="page-header"><h1>GluteBuilder <span>12W</span></h1><p>' + wk.phase + ' - ' + wk.sets + ' sets - ' + wk.reps + ' reps - ' + wk.days + ' days this week</p></div>' +
+    '<div class="week-strip" id="wstrip">' + chips + '</div>' +
+    banner +
+    (weekDone ? '<div class="week-complete-bar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Week ' + wk.n + ' complete - you smashed it!</div>' : '') +
+    '<div class="coach-note">' + wk.note + '</div>' +
+    days +
+    '<div style="height:8px"></div>';
 
   setTimeout(function() {
-    FIELDS.forEach(function(f) {
-      if (activeMetrics.indexOf(f.id) === -1) return;
-      var canvas = g("chart-" + f.id);
-      if (!canvas) return;
-      var pts = data.filter(function(e){ return e[f.id] != null; });
-      if (pts.length < 2) return;
-
-      if (chartInstances[f.id]) { try { chartInstances[f.id].destroy(); } catch(e){} }
-
-      var labels = pts.map(function(e){
-        var d = new Date(e.date);
-        return (d.getMonth()+1) + "/" + d.getDate();
-      });
-      var values = pts.map(function(e){ return e[f.id]; });
-      var mn = Math.min.apply(null,values);
-      var mx = Math.max.apply(null,values);
-      var pad = Math.max((mx-mn)*0.2, 1);
-
-      chartInstances[f.id] = new Chart(canvas, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            borderColor: f.color,
-            backgroundColor: f.color + "22",
-            borderWidth: 2,
-            pointRadius: pts.length > 10 ? 2 : 4,
-            pointBackgroundColor: f.color,
-            fill: true,
-            tension: 0.3,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: {
-            backgroundColor: "#1c2030",
-            borderColor: "#2a3048",
-            borderWidth: 1,
-            titleColor: "#8892b0",
-            bodyColor: "#e8eaf6",
-            callbacks: {
-              label: function(ctx) { return ctx.parsed.y + " " + f.unit; }
-            }
-          }},
-          scales: {
-            x: {
-              ticks: { color: "#4a5578", font: { size: 10, family: "'DM Mono', monospace" }, maxTicksLimit: 8, maxRotation: 0 },
-              grid: { color: "#1c2030" },
-              border: { color: "#2a3048" }
-            },
-            y: {
-              min: parseFloat((mn - pad).toFixed(1)),
-              max: parseFloat((mx + pad).toFixed(1)),
-              ticks: { color: "#4a5578", font: { size: 10, family: "'DM Mono', monospace" }, maxTicksLimit: 5 },
-              grid: { color: "#1c2030" },
-              border: { color: "#2a3048" }
-            }
-          }
-        }
-      });
-    });
+    var strip = g("wstrip");
+    if (!strip) return;
+    var active = strip.querySelector(".wchip.active");
+    if (active) active.scrollIntoView({inline:"center", behavior:"smooth", block:"nearest"});
   }, 50);
 }
 
-function toggleMetric(id) {
-  var idx = activeMetrics.indexOf(id);
-  if (idx === -1) { activeMetrics.push(id); }
-  else if (activeMetrics.length > 1) { activeMetrics.splice(idx, 1); }
-  renderTrends();
-}
-
-
-function updateFigureLabels() {
-  var ACCENT = "#4fc3f7";
-  var DIM    = "#2a3048";
-  var data   = dbLoad();
-  var latest = null;
-  if (data.length) {
-    data.sort(function(a,b){ return b.date.localeCompare(a.date); });
-    latest = data[0];
-  }
-  var fids = ["height","weight","bodyfat","neck","chest","bicep","forearm","waist","hips","quad","calf"];
-  fids.forEach(function(fid) {
-    var field = FIELDS.find(function(f){ return f.id === fid; });
-    var unit  = field ? " " + field.unit : "";
-    var inp   = document.getElementById("f-" + fid);
-    var val   = inp && inp.value ? inp.value : (latest && latest[fid] != null ? String(latest[fid]) : null);
-    var display = val ? val + unit : "--";
-    var color   = val ? ACCENT : DIM;
-    document.querySelectorAll("[id=fig-" + fid + "]").forEach(function(el) {
-      el.textContent = display;
-      el.setAttribute("fill", color);
-    });
-    var dot = document.getElementById("dot-" + fid);
-    if (dot) dot.setAttribute("fill", color);
-    var line = document.getElementById("line-" + fid);
-    if (line) line.setAttribute("stroke", val ? ACCENT : DIM);
-  });
-}
-
-function openForm() {
-  var now = today();
-  g("sheet-date-label").textContent = formatDate(now);
-  var data = dbLoad();
-  var existing = data.find(function(e){ return e.date === now; });
-  FIELDS.forEach(function(f) {
-    var el = g("f-" + f.id);
-    if (el) el.value = existing && existing[f.id] != null ? existing[f.id] : "";
-  });
-  g("overlay").classList.add("open");
-  updateFigureLabels();
-}
-
-function closeForm() { g("overlay").classList.remove("open"); }
-function overlayClick(e) { if (e.target === g("overlay")) closeForm(); }
-
-document.addEventListener("input", function(e) {
-  if (e.target && e.target.classList.contains("form-input")) {
-    updateFigureLabels();
-  }
-});
-
-
-function renderStats() {
-  var data = dbLoad();
-  var el = g("v-stats");
-
-  el.innerHTML = '<div class="page-header"><h1>BODY <span>STATS</span></h1><p>Calculated from latest entry</p></div><div class="trends-content">';
-
-  if (!data.length) {
-    el.innerHTML += '<div class="empty-state"><p>No entries yet. Log measurements to see stats.</p></div></div>';
-    return;
+function openModal(safeEx, dayType) {
+  var ex = decodeURIComponent(safeEx);
+  var db = dbLoad();
+  var wk = WEEKS[curWeek - 1];
+  var existing = dbGet(db, curWeek, ex);
+  var history  = getHistory(db, ex);
+  var last     = getLastPerf(db, curWeek, ex);
+  var suggestKg = 0;
+  if (last && last.sets.length) {
+    for (var s = 0; s < last.sets.length; s++) { if (last.sets[s].kg && +last.sets[s].kg > suggestKg) suggestKg = +last.sets[s].kg; }
   }
 
-  data.sort(function(a,b){ return b.date.localeCompare(a.date); });
-  var d = data[0];
-  var prev = data.length > 1 ? data[1] : null;
+  var sets = existing && existing.sets ? existing.sets.slice() : [];
+  while (sets.length < wk.sets) sets.push({kg:"", reps:"", done:false});
 
-  var h   = d.height   ? d.height / 100 : null;  // metres
-  var w   = d.weight   ? d.weight       : null;   // kg
-  var bf  = d.bodyfat  ? d.bodyfat / 100: null;   // fraction
-  var wst = d.waist    ? d.waist / 100   : null;  // metres
-  var hip = d.hips     ? d.hips          : null;  // cm
-  var cst = d.chest    ? d.chest         : null;  // cm
-  var bic = d.bicep    ? d.bicep         : null;
-  var calf= d.calf     ? d.calf          : null;
-  var quad= d.quad     ? d.quad          : null;
-
-  var html = "";
-
-  // ---- BODY COMPOSITION ----
-  html += '<div class="section-title">Body Composition</div>';
-  html += '<div class="stats-grid">';
-
-  if (h && w) {
-    var bmi = w / (h * h);
-    var bmiCat = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Normal" : bmi < 30 ? "Overweight" : "Obese";
-    var bmiColor = bmi < 18.5 ? "var(--accent)" : bmi < 25 ? "var(--green)" : bmi < 30 ? "var(--gold)" : "var(--red)";
-    html += statCard("BMI", bmi.toFixed(1), "", bmiCat, bmiColor);
+  var setRows = "";
+  for (var i = 0; i < sets.length; i++) {
+    var s = sets[i];
+    var kgPh = suggestKg > 0 ? suggestKg : "kg";
+    var repsPh = wk.reps.split("-")[0];
+    setRows += '<div class="set-row">' +
+      '<div class="set-num">SET ' + (i+1) + '</div>' +
+      '<div class="set-inputs">' +
+        '<div class="field-wrap"><input class="set-input" type="number" id="kg' + i + '" value="' + (s.kg||"") + '" placeholder="' + kgPh + '" inputmode="decimal" step="0.5" min="0"><div class="field-lbl">KG</div></div>' +
+        '<div class="field-wrap"><input class="set-input" type="number" id="rp' + i + '" value="' + (s.reps||"") + '" placeholder="' + repsPh + '" inputmode="numeric" min="0" max="99"><div class="field-lbl">REPS</div></div>' +
+      '</div>' +
+      '<button class="check-btn' + (s.done?" done":"") + '" id="chk' + i + '" onclick="toggleCheck(' + i + ',' + suggestKg + ',\'' + repsPh + '\')">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '</button></div>';
   }
 
-  if (w && bf) {
-    var fatKg  = (w * bf).toFixed(1);
-    var leanKg = (w * (1 - bf)).toFixed(1);
-    html += statCard("Fat Mass", fatKg, "kg", null, null);
-    html += statCard("Lean Mass", leanKg, "kg", null, "var(--green)");
-  }
-
-  if (h && w && bf) {
-    var lean = w * (1 - bf);
-    var ffmi = lean / (h * h);
-    var ffmiNote = ffmi < 18 ? "Below avg" : ffmi < 20 ? "Average" : ffmi < 22 ? "Above avg" : ffmi < 24 ? "Excellent" : ffmi < 26 ? "Superior" : "Elite";
-    var ffmiColor = ffmi < 18 ? "var(--text2)" : ffmi < 22 ? "var(--accent)" : ffmi < 25 ? "var(--green)" : "var(--gold)";
-    html += statCard("FFMI", ffmi.toFixed(1), "", ffmiNote, ffmiColor);
-  }
-
-  if (w && bf) {
-    var rfm = bf * 100;
-    var rfmNote = rfm < 8 ? "Essential" : rfm < 14 ? "Athletic" : rfm < 18 ? "Fitness" : rfm < 25 ? "Average" : "Above avg";
-    html += statCard("Body Fat", rfm.toFixed(1), "%", rfmNote, null);
-  }
-
-  html += "</div>";
-
-  // ---- PROPORTIONS ----
-  if (wst || hip || cst) {
-    html += '<div class="section-title" style="margin-top:16px">Proportions</div>';
-    html += '<div class="stats-grid">';
-
-    if (wst && hip) {
-      var whr = (wst * 100 / hip);
-      var whrNote = whr < 0.85 ? "Healthy" : whr < 0.9 ? "Moderate" : "High risk";
-      var whrColor = whr < 0.85 ? "var(--green)" : whr < 0.9 ? "var(--gold)" : "var(--red)";
-      html += statCard("Waist/Hip", whr.toFixed(2), "", whrNote, whrColor);
+  var histHtml = "";
+  if (history.length) {
+    histHtml = '<div class="history-sec"><div class="history-title">History</div>';
+    var recent = history.slice().reverse().slice(0,5);
+    for (var h = 0; h < recent.length; h++) {
+      var entry = recent[h];
+      var setsHtml = "";
+      for (var si = 0; si < entry.sets.length; si++) {
+        var sv = entry.sets[si];
+        if (sv.kg || sv.reps) setsHtml += '<div class="hist-set">' + (sv.kg||"?") + 'kg x ' + (sv.reps||"?") + '</div>';
+      }
+      histHtml += '<div class="hist-entry"><div class="hist-wk">Week ' + entry.week + (entry.date?" - "+entry.date:"") + '</div><div class="hist-sets">' + setsHtml + '</div></div>';
     }
-
-    if (h && wst) {
-      var whi = (wst / h);
-      var whiNote = whi < 0.4 ? "Very low" : whi < 0.5 ? "Healthy" : whi < 0.6 ? "Elevated" : "High risk";
-      var whiColor = whi < 0.5 ? "var(--green)" : whi < 0.6 ? "var(--gold)" : "var(--red)";
-      html += statCard("Waist/Height", whi.toFixed(2), "", whiNote, whiColor);
-    }
-
-    if (cst && wst) {
-      var vtaper = (cst / (wst * 100));
-      html += statCard("V-Taper", vtaper.toFixed(2), "", "Chest / waist", "var(--accent)");
-    }
-
-    if (bic && calf) {
-      var sym = Math.abs(bic - calf);
-      var symNote = sym < 2 ? "Balanced" : sym < 4 ? "Minor diff" : "Notable diff";
-      html += statCard("Bicep/Calf", (bic/calf).toFixed(2), "", symNote, "var(--accent)");
-    }
-
-    if (quad && calf) {
-      html += statCard("Quad/Calf", (quad/calf).toFixed(2), "", "Lower sym.", "var(--accent)");
-    }
-
-    html += "</div>";
+    histHtml += '</div>';
   }
 
-  // ---- PROGRESS (if prev entry) ----
-  if (prev) {
-    html += '<div class="section-title" style="margin-top:16px">Since Last Entry</div>';
-    html += '<div class="stats-grid">';
-
-    if (d.weight && prev.weight) {
-      var wDiff = (d.weight - prev.weight).toFixed(1);
-      var wColor = wDiff < 0 ? "var(--green)" : wDiff > 0 ? "var(--red)" : "var(--text2)";
-      html += statCard("Weight", (wDiff > 0 ? "+" : "") + wDiff, "kg", "vs previous", wColor);
-    }
-
-    if (d.weight && prev.weight && d.bodyfat && prev.bodyfat) {
-      var prevLean = prev.weight * (1 - prev.bodyfat/100);
-      var curLean  = d.weight   * (1 - d.bodyfat/100);
-      var lDiff    = (curLean - prevLean).toFixed(1);
-      var lColor   = lDiff > 0 ? "var(--green)" : "var(--red)";
-      html += statCard("Lean mass", (lDiff > 0 ? "+" : "") + lDiff, "kg", "vs previous", lColor);
-
-      var prevFat  = prev.weight * (prev.bodyfat/100);
-      var curFat   = d.weight   * (d.bodyfat/100);
-      var fDiff    = (curFat - prevFat).toFixed(1);
-      var fColor   = fDiff < 0 ? "var(--green)" : "var(--red)";
-      html += statCard("Fat mass", (fDiff > 0 ? "+" : "") + fDiff, "kg", "vs previous", fColor);
-    }
-
-    if (d.waist && prev.waist) {
-      var wstDiff = (d.waist - prev.waist).toFixed(1);
-      var wstColor = wstDiff < 0 ? "var(--green)" : "var(--red)";
-      html += statCard("Waist", (wstDiff > 0 ? "+" : "") + wstDiff, "cm", "vs previous", wstColor);
-    }
-
-    html += "</div>";
-  }
-
-  html += "</div>";
-  el.innerHTML += html;
-}
-
-function statCard(label, value, unit, note, color) {
-  var valStyle = color ? 'color:' + color : 'color:var(--text)';
-  return '<div class="stat-card">' +
-    '<div class="stat-label">' + label + '</div>' +
-    '<div class="stat-val" style="' + valStyle + '">' + value +
-      (unit ? '<span class="stat-unit">' + unit + '</span>' : '') +
+  g("modal").innerHTML =
+    '<div class="modal-handle"></div>' +
+    '<div class="modal-head">' +
+      '<div class="modal-daytype">' + dayType.toUpperCase() + '</div>' +
+      '<div class="modal-title" onclick="showExInfo(\'' + safeEx + '\')">' + ex + ' <span class="modal-title-hint">?</span></div>' +
+      '<div class="modal-sub">' + wk.sets + ' sets - ' + wk.reps + ' reps - ' + wk.rir + ' - Week ' + wk.n + '</div>' +
+      (suggestKg > 0 ? '<div class="modal-hint">Last logged: ' + suggestKg + ' kg</div>' : '') +
     '</div>' +
-    (note ? '<div class="stat-change" style="color:var(--text3)">' + note + '</div>' : '') +
+    '<div class="set-logger"><div class="logger-title">Log Sets</div>' + setRows + '</div>' +
+    histHtml +
+    '<div class="modal-actions"><button class="btn btn-primary" onclick="saveModal(\'' + safeEx + '\',' + wk.sets + ')">Save Sets</button><button class="btn btn-ghost" onclick="closeModal()">Close</button></div>' +
+    '<div style="height:8px"></div>';
+
+  g("overlay").classList.add("open");
+}
+
+function toggleCheck(i, suggestKg, repsPh) {
+  var btn = g("chk" + i);
+  btn.classList.toggle("done");
+  if (btn.classList.contains("done")) {
+    var kgEl = g("kg" + i);
+    var rpEl = g("rp" + i);
+    if (kgEl && !kgEl.value && suggestKg) kgEl.value = suggestKg;
+    if (rpEl && !rpEl.value) rpEl.value = repsPh;
+    startTimer();
+  } else {
+    stopTimer();
+  }
+}
+
+function saveModal(safeEx, numSets) {
+  var ex = decodeURIComponent(safeEx);
+  var db = dbLoad();
+  var sets = [];
+  for (var i = 0; i < numSets; i++) {
+    var kgEl  = g("kg"  + i);
+    var rpEl  = g("rp"  + i);
+    var chkEl = g("chk" + i);
+    sets.push({kg:kgEl?kgEl.value:"", reps:rpEl?rpEl.value:"", done:chkEl?chkEl.classList.contains("done"):false});
+  }
+  var now = new Date();
+  var date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
+  dbSet(db, curWeek, ex, {sets:sets, date:date});
+  closeModal();
+  renderWorkout();
+}
+
+function closeModal() { g("overlay").classList.remove("open"); }
+function overlayClick(e) { if (e.target === g("overlay")) closeModal(); }
+
+var MW_LINKS = {
+  "Barbell Hip Thrust": "barbell-hip-thrust",
+  "Smith Machine RDL": "smith-machine-romanian-deadlift",
+  "DB Bulgarian Split Squat": "dumbbell-bulgarian-split-squat",
+  "Cable Kickback": "cable-standing-glute-kickback",
+  "Abduction Machine": "machine-hip-abduction",
+  "Leg Curl": "machine-lying-leg-curl",
+  "Glute Bridge Pulse": "glute-bridge",
+  "Smith Machine Hip Thrust": "smith-machine-hip-thrust",
+  "Back Extension": "machine-45-degree-back-extension",
+  "Sumo Deadlift": "barbell-sumo-deadlift",
+  "Copenhagen Plank": "copenhagen-plank",
+  "Dead Bug": "dead-bug",
+  "Cable Pull Through": "cable-pull-through",
+  "Pallof Press": "cable-pallof-press",
+  "Lat Pulldown": "machine-pulldown",
+  "Seated Cable Row": "machine-seated-cable-row",
+  "DB Shoulder Press": "dumbbell-shoulder-press",
+  "Cable Lateral Raise": "cable-low-bilateral-lateral-raise",
+  "Incline DB Press": "incline-dumbbell-press",
+  "Tricep Rope Pushdown": "cable-rope-pushdown",
+  "Face Pulls": "machine-face-pulls",
+  "Hip Thrust Machine": "machine-hip-thrust",
+  "Curtsy Lunge": "curtsy-lunge",
+  "Cable Abduction": "cable-hip-abduction",
+  "Seated Abduction Machine": "machine-hip-abduction",
+  "Reverse Hyperextension": "reverse-hyperextension",
+  "Banded Clamshell": "clamshell",
+  "Donkey Kick Cable": "cable-standing-glute-kickback",
+};
+var YT_LINKS = {
+  "Barbell Hip Thrust": "barbell hip thrust tutorial",
+  "Smith Machine RDL": "Smith machine RDL Romanian deadlift form",
+  "DB Bulgarian Split Squat": "dumbbell Bulgarian split squat tutorial",
+  "Cable Kickback": "cable glute kickback tutorial",
+  "Abduction Machine": "hip abduction machine glute medius tutorial",
+  "Leg Curl": "lying leg curl tutorial form",
+  "Glute Bridge Pulse": "glute bridge pulse exercise",
+  "Smith Machine Hip Thrust": "Smith machine hip thrust tutorial",
+  "Back Extension": "back extension glute focus tutorial",
+  "Sumo Deadlift": "sumo deadlift glutes tutorial",
+  "Copenhagen Plank": "Copenhagen plank tutorial",
+  "Dead Bug": "dead bug core exercise tutorial",
+  "Cable Pull Through": "cable pull through glute tutorial",
+  "Pallof Press": "Pallof press core anti rotation tutorial",
+  "Lat Pulldown": "lat pulldown proper form tutorial",
+  "Seated Cable Row": "seated cable row back exercise form",
+  "DB Shoulder Press": "dumbbell shoulder press tutorial",
+  "Cable Lateral Raise": "cable lateral raise shoulder tutorial",
+  "Incline DB Press": "incline dumbbell press chest tutorial",
+  "Tricep Rope Pushdown": "tricep rope pushdown cable tutorial",
+  "Face Pulls": "face pulls cable rear delt tutorial",
+  "Hip Thrust Machine": "hip thrust machine tutorial",
+  "Curtsy Lunge": "curtsy lunge glute medius tutorial",
+  "Cable Abduction": "cable hip abduction glute medius tutorial",
+  "Seated Abduction Machine": "seated hip abduction machine hip dips",
+  "Reverse Hyperextension": "reverse hyperextension glute tutorial",
+  "Banded Clamshell": "banded clamshell hip abductor tutorial",
+  "Donkey Kick Cable": "cable donkey kick glute tutorial",
+};
+
+function showExInfo(safeEx) {
+  var ex = decodeURIComponent(safeEx);
+  var info = EX_INFO[ex];
+  var popup = g("ex-info-popup");
+  var mwSlug = MW_LINKS[ex] || "";
+  var ytQuery = YT_LINKS[ex] || (ex + " exercise tutorial");
+  var mwUrl = mwSlug ? "https://musclewiki.com/exercise/" + mwSlug : "";
+  var ytUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(ytQuery);
+
+  var linkBtns = '<div style="display:flex;gap:8px;margin-bottom:16px">';
+  if (mwUrl) {
+    linkBtns += '<a href="' + mwUrl + '" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 8px;background:rgba(255,110,180,0.1);border:1px solid rgba(255,110,180,0.3);border-radius:9px;text-decoration:none;color:var(--accent);font-size:12px;font-weight:600;font-family:DM Sans,sans-serif">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+      'Muscle Wiki</a>';
+  }
+  linkBtns += '<a href="' + ytUrl + '" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 8px;background:rgba(255,60,60,0.1);border:1px solid rgba(255,60,60,0.3);border-radius:9px;text-decoration:none;color:#ff6060;font-size:12px;font-weight:600;font-family:DM Sans,sans-serif">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.1 2.8 12 2.8 12 2.8s-4.1 0-6.8.1c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v1.9C.7 15.3 1 17.3 1 17.3s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.6 21.5 12 21.5 12 21.5s4.1 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-1.9C23.3 9.1 23 7 23 7zM9.7 14.9V8.6l6.5 3.2-6.5 3.1z"/></svg>' +
+    'YouTube</a>';
+  linkBtns += '</div>';
+
+  if (!info) {
+    popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body"><div class="ex-info-name">' + ex + '</div><div style="height:10px"></div>' + linkBtns + '</div>';
+  } else {
+    var tips = info.tips.map(function(t){ return "<li>" + t + "</li>"; }).join("");
+    popup.innerHTML = '<div class="modal-handle"></div><div class="ex-info-body">' +
+      '<div class="ex-info-name">' + ex + '</div>' +
+      '<div class="ex-info-muscle">' + info.muscle + '</div>' +
+      '<div style="height:12px"></div>' +
+      linkBtns +
+      '<div class="ex-info-section"><div class="ex-info-section-title">Execution</div><div class="ex-info-text">' + info.exec + '</div></div>' +
+      '<div class="ex-info-section"><div class="ex-info-section-title">Key Tips</div><ul class="ex-info-tips">' + tips + '</ul></div>' +
+      '</div><div style="height:20px"></div>';
+  }
+  g("ex-info-overlay").classList.add("open");
+}
+function closeExInfo() { g("ex-info-overlay").classList.remove("open"); }
+
+function startTimer() {
+  stopTimer();
+  timerRemaining = timerDuration;
+  var bar = g("timer-bar");
+  if (bar) bar.classList.add("visible");
+  updateTimerDisplay();
+  timerInterval = setInterval(function() {
+    timerRemaining--;
+    updateTimerDisplay();
+    if (timerRemaining <= 0) { stopTimer(); timerDone(); }
+  }, 1000);
+}
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  var bar = g("timer-bar");
+  if (bar) bar.classList.remove("visible");
+}
+function timerDone() {
+  var bar = g("timer-bar");
+  if (bar) bar.classList.add("visible");
+  var cd = g("timer-countdown");
+  if (cd) { cd.textContent = "GO!"; cd.classList.add("done"); }
+  playBeep();
+  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    new Notification("Rest over!", {body:"Time for your next set.", icon:"/GluteBuilder/icon-192.png"});
+  }
+  setTimeout(function() {
+    var bar2 = g("timer-bar");
+    if (bar2) bar2.classList.remove("visible");
+    var cd2 = g("timer-countdown");
+    if (cd2) cd2.classList.remove("done");
+  }, 3000);
+}
+function playBeep() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq, start, dur) {
+      var o = ctx.createOscillator(); var gn = ctx.createGain();
+      o.connect(gn); gn.connect(ctx.destination);
+      o.frequency.value = freq; o.type = "sine";
+      gn.gain.setValueAtTime(0.4, ctx.currentTime + start);
+      gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+      o.start(ctx.currentTime + start); o.stop(ctx.currentTime + start + dur);
+    }
+    beep(880, 0, 0.15); beep(880, 0.18, 0.15); beep(1100, 0.36, 0.3);
+  } catch(e) {}
+}
+function updateTimerDisplay() {
+  var cd   = g("timer-countdown");
+  var ring = g("timer-ring-fg");
+  if (!cd) return;
+  var mins = Math.floor(timerRemaining / 60);
+  var secs = timerRemaining % 60;
+  cd.textContent = mins + ":" + (secs < 10 ? "0" : "") + secs;
+  var pct = timerDuration > 0 ? timerRemaining / timerDuration : 0;
+  var circ = 2 * Math.PI * 17;
+  if (ring) { ring.style.strokeDasharray = circ; ring.style.strokeDashoffset = circ * (1 - pct); }
+}
+
+function renderProgress() {
+  var db = dbLoad();
+  var totalSets = 0, totalEx = 0;
+  var prs = {};
+  var weeksLogged = {};
+  for (var w = 1; w <= 12; w++) {
+    for (var d = 0; d < SPLIT.length; d++) {
+      for (var e = 0; e < SPLIT[d].ex.length; e++) {
+        var ex = SPLIT[d].ex[e];
+        var data = dbGet(db, w, ex);
+        if (data && data.sets) {
+          var hasDone = false;
+          for (var si = 0; si < data.sets.length; si++) {
+            var s = data.sets[si];
+            if (s.done || s.kg || s.reps) { hasDone = true; totalSets++; }
+          }
+          if (hasDone) {
+            totalEx++; weeksLogged[w] = true;
+            var maxKg = 0;
+            for (var si2 = 0; si2 < data.sets.length; si2++) { if (data.sets[si2].kg && +data.sets[si2].kg > maxKg) maxKg = +data.sets[si2].kg; }
+            if (maxKg > 0 && (!prs[ex] || maxKg > prs[ex].kg)) prs[ex] = {kg:maxKg, week:w};
+          }
+        }
+      }
+    }
+  }
+  var weeksCount = Object.keys(weeksLogged).length;
+  var pct = Math.round((weeksCount / 12) * 100);
+  var prArr = [];
+  for (var exKey in prs) { prArr.push({ex:exKey, kg:prs[exKey].kg, week:prs[exKey].week}); }
+  prArr.sort(function(a,b){ return b.kg - a.kg; });
+  prArr = prArr.slice(0,12);
+  var prHtml = prArr.length ? prArr.map(function(p){ return '<div class="pr-row"><div class="pr-ex">' + p.ex + '</div><div class="pr-val">' + p.kg + ' kg <span style="color:var(--text3);font-size:10px">Wk'+p.week+'</span></div></div>'; }).join("") : '<div style="font-size:12px;color:var(--text3);font-style:italic">No weights logged yet.</div>';
+  var heatmap = "";
+  for (var wi = 0; wi < WEEKS.length; wi++) {
+    var ww = WEEKS[wi];
+    var active = !!weeksLogged[ww.n];
+    var col = active ? (ww.phase==="Deload"?"var(--gold)":ww.phase==="Peak"?"var(--pump)":"var(--accent)") : "var(--surface2)";
+    heatmap += '<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;aspect-ratio:1;border-radius:5px;background:' + col + ';opacity:' + (active?1:0.4) + '"></div><div style="font-size:9px;color:var(--text3);font-family:\'DM Mono\',monospace">W' + ww.n + '</div></div>';
+  }
+  g("v-progress").innerHTML =
+    '<div class="page-header"><h1>Your <span>Progress</span></h1><p>12-week tracking overview</p></div>' +
+    '<div class="prog-content">' +
+      '<div class="prog-card"><div class="prog-card-title">Program Progress</div>' +
+        '<div class="stat-row"><div class="stat-name">Weeks active</div><div><span class="stat-val">' + weeksCount + '</span><span class="stat-unit">/ 12</span></div></div>' +
+        '<div class="progress-bar-wrap"><div class="progress-bar" style="width:' + pct + '%"></div></div>' +
+        '<div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:\'DM Mono\',monospace;text-align:right">' + pct + '% complete</div>' +
+      '</div>' +
+      '<div class="prog-card"><div class="prog-card-title">Volume</div>' +
+        '<div class="stat-row"><div class="stat-name">Total sets logged</div><div><span class="stat-val">' + totalSets + '</span></div></div>' +
+        '<div class="stat-row"><div class="stat-name">Exercise sessions</div><div><span class="stat-val">' + totalEx + '</span></div></div>' +
+      '</div>' +
+      '<div class="prog-card"><div class="prog-card-title">Top Weights (PRs)</div>' + prHtml + '</div>' +
+      '<div class="prog-card"><div class="prog-card-title">Week Activity</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px">' + heatmap + '</div></div>' +
     '</div>';
 }
 
-setTab("log");
+function renderOverview() {
+  var phaseCards = PHASE_CARDS.map(function(p) {
+    return '<div class="phase-card ' + p.cls + '"><div class="pc-head"><div class="pc-name">' + p.name + '</div><div class="pc-weeks">' + p.weeks + '</div></div>' +
+      '<div class="pc-body"><div><div class="pc-stat-val">' + p.sets + '</div><div class="pc-stat-lbl">Sets</div></div><div><div class="pc-stat-val">' + p.reps + '</div><div class="pc-stat-lbl">Reps</div></div><div><div class="pc-stat-val">' + p.rir + '</div><div class="pc-stat-lbl">RIR</div></div></div>' +
+      '<div class="pc-note">' + p.note + '</div></div>';
+  }).join("");
 
+  var splitRows = SPLIT.map(function(day, i) {
+    var col = DOT[day.type] || "#3d3342";
+    var bg = i % 2 ? "var(--surface)" : "transparent";
+    return '<div class="info-row" style="background:' + bg + '"><div class="info-dot" style="background:' + col + '"></div><div class="info-day">' + day.day + '</div><div><div class="info-label">' + day.label + '</div><div class="info-sub">' + day.sub + '</div></div></div>';
+  }).join("");
+
+  var princRows = PRINCIPLES.map(function(p, i) {
+    var bg = i % 2 ? "var(--surface)" : "transparent";
+    return '<div class="prin-row" style="background:' + bg + '"><div class="prin-title">' + p[0] + '</div><div class="prin-desc">' + p[1] + '</div></div>';
+  }).join("");
+
+  g("v-overview").innerHTML =
+    '<div class="page-header"><h1>Program <span>Overview</span></h1><p>12-Week Glute Builder - 3 to 4 days per week</p></div>' +
+    '<div class="ov-content">' + phaseCards +
+    '<div class="info-card"><div class="info-card-head">The 4 Sessions</div>' + splitRows + '</div>' +
+    '<div class="info-card"><div class="info-card-head">Principles</div>' + princRows + '</div>' +
+    '<div style="height:8px"></div></div>';
+}
+
+if (typeof Notification !== "undefined" && Notification.permission === "default") {
+  Notification.requestPermission();
+}
+renderWorkout();
 </script>
 </body>
 </html>
