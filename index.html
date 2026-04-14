@@ -235,6 +235,13 @@ input[type=number] { -moz-appearance: textfield; }
 .quick-done-btn.all-done { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
 .day-done-btn { margin-left: auto; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text3); font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; cursor: pointer; white-space: nowrap; }
 .day-done-btn.done { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+.timer-adjust { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px; border-top: 1px solid var(--border); margin-top: 4px; }
+.timer-adjust-label { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; letter-spacing: 0.06em; }
+.timer-dur-pick { display: flex; gap: 6px; }
+.dur-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Mono', monospace; font-size: 12px; cursor: pointer; -webkit-appearance: none; appearance: none; }
+
+.dur-btn.active { background: var(--accent); color: #0a0a0c; border-color: var(--accent); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -283,6 +290,15 @@ input[type=number] { -moz-appearance: textfield; }
   </div>
 </div>
 <script>
+
+window.onerror = function(msg, src, line, col, err) {
+  var div = document.createElement("div");
+  div.style.cssText = "position:fixed;top:0;left:0;right:0;background:#ff0044;color:#fff;font-family:monospace;font-size:12px;padding:12px;z-index:9999;word-break:break-all;white-space:pre-wrap";
+  div.textContent = "ERROR: " + msg + "\nLine: " + line + " Col: " + col + "\nSrc: " + src + "\n" + (err ? err.stack : "");
+  document.body.appendChild(div);
+  return false;
+};
+
 var SPLIT = [
   {day:"A", type:"glute", label:"Glute Focus", sub:"Primary glute + hamstring session", ex:[
     "Barbell Hip Thrust","Smith Machine RDL","DB Bulgarian Split Squat","Cable Kickback","Abduction Machine","Leg Curl","Glute Bridge Pulse"
@@ -364,6 +380,10 @@ var DOT = {glute:"#ff6eb4", core:"#f0c060", upper:"#80c8ff", pump:"#b088ff", res
 var curTab  = "workout";
 var curWeek = 1;
 var timerDuration = 120;
+var EX_TIMERS = {"Barbell Hip Thrust": 180, "Smith Machine Hip Thrust": 180, "Smith Machine RDL": 180, "DB Bulgarian Split Squat": 180, "Sumo Deadlift": 180, "Reverse Hyperextension": 180, "Cable Pull Through": 180, "Hip Thrust Machine": 180, "Back Extension": 120, "Leg Curl": 120, "Curtsy Lunge": 120, "Lat Pulldown": 120, "Seated Cable Row": 120, "DB Shoulder Press": 120, "Incline DB Press": 120, "Cable Kickback": 90, "Abduction Machine": 90, "Copenhagen Plank": 90, "Dead Bug": 90, "Pallof Press": 90, "Banded Clamshell": 90, "Cable Abduction": 90, "Glute Bridge Pulse": 90};
+var DEFAULT_TIMER = 90;
+var curExName = "";
+var curNumSets = 0;
 var timerRemaining = 0;
 var timerInterval = null;
 
@@ -498,8 +518,11 @@ function renderWorkout() {
 
 function openModal(safeEx, dayType) {
   var ex = decodeURIComponent(safeEx);
+  curExName = ex;
+  timerDuration = (EX_TIMERS[ex] !== undefined) ? EX_TIMERS[ex] : DEFAULT_TIMER;
   var db = dbLoad();
   var wk = WEEKS[curWeek - 1];
+  curNumSets = wk.sets;
   var existing = dbGet(db, curWeek, ex);
   var history  = getHistory(db, ex);
   var last     = getLastPerf(db, curWeek, ex);
@@ -553,10 +576,20 @@ function openModal(safeEx, dayType) {
     '</div>' +
     '<div class="set-logger"><div class="logger-title">Log Sets</div>' + setRows + '</div>' +
     histHtml +
-    '<div class="modal-actions"><button class="btn btn-primary" onclick="saveModal(\'' + safeEx + '\',' + wk.sets + ')">Save Sets</button><button class="btn btn-ghost" onclick="closeModal()">Close</button></div>' +
-    '<div style="height:8px"></div>';
+    '<div class="timer-adjust"><div class="timer-adjust-label">Rest timer</div>' +
+    '<div class="timer-dur-pick">' +
+    '<button class="dur-btn" data-dur="60" onclick="setTimerDuration(60)">1:00</button>' +
+    '<button class="dur-btn" data-dur="90" onclick="setTimerDuration(90)">1:30</button>' +
+    '<button class="dur-btn" data-dur="120" onclick="setTimerDuration(120)">2:00</button>' +
+    '<button class="dur-btn" data-dur="180" onclick="setTimerDuration(180)">3:00</button>' +
+    '</div></div>' +
+    '<div class="modal-actions">' +
+    '<button class="btn btn-primary" onclick="saveModal()">Save Sets</button>' +
+    '<button class="btn btn-ghost" onclick="closeModal()">Close</button>' +
+    '</div><div style="height:8px"></div>';
 
   g("overlay").classList.add("open");
+  setTimeout(function(){ document.querySelectorAll(".dur-btn").forEach(function(b){ b.classList.toggle("active", +b.dataset.dur === timerDuration); }); }, 10);
 }
 
 function toggleCheck(i, suggestKg, repsPh) {
@@ -573,8 +606,9 @@ function toggleCheck(i, suggestKg, repsPh) {
   }
 }
 
-function saveModal(safeEx, numSets) {
-  var ex = decodeURIComponent(safeEx);
+function saveModal() {
+  var ex = curExName;
+  var numSets = curNumSets;
   var db = dbLoad();
   var sets = [];
   for (var i = 0; i < numSets; i++) {
@@ -594,6 +628,7 @@ function quickCompleteEx(safeEx) {
   var ex = decodeURIComponent(safeEx);
   var db = dbLoad();
   var wk = WEEKS[curWeek - 1];
+  curNumSets = wk.sets;
   var existing = dbGet(db, curWeek, ex);
   var last = getLastPerf(db, curWeek, ex);
   var sets = [];
@@ -735,6 +770,11 @@ function showExInfo(safeEx) {
   g("ex-info-overlay").classList.add("open");
 }
 function closeExInfo() { g("ex-info-overlay").classList.remove("open"); }
+
+function setTimerDuration(sec) {
+  timerDuration = sec;
+  document.querySelectorAll(".dur-btn").forEach(function(b){ b.classList.toggle("active", +b.dataset.dur === sec); });
+}
 
 function startTimer() {
   stopTimer();
