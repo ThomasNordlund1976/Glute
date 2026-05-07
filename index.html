@@ -413,14 +413,14 @@ var timerEndTime = 0;
 
 function dbLoad() { try { return JSON.parse(localStorage.getItem("glute12w") || "{}"); } catch(e) { return {}; } }
 function dbSave(db) { try { localStorage.setItem("glute12w", JSON.stringify(db)); } catch(e) {} }
-function dbKey(w, ex) { return "w" + w + "_" + ex; }
-function dbGet(db, w, ex) { return db[dbKey(w, ex)] || null; }
-function dbSet(db, w, ex, val) { db[dbKey(w, ex)] = val; dbSave(db); }
+function dbKey(w, ex, d) { return "w" + w + (d !== undefined ? "_d" + d : "") + "_" + ex; }
+function dbGet(db, w, ex, d) { return db[dbKey(w, ex, d)] || null; }
+function dbSet(db, w, ex, val, d) { db[dbKey(w, ex, d)] = val; dbSave(db); }
 
-function getHistory(db, ex) {
+function getHistory(db, ex, d) {
   var out = [];
   for (var w = 1; w <= 12; w++) {
-    var d = dbGet(db, w, ex);
+    var d = dbGet(db, w, ex, d);
     if (d && d.sets) {
       var has = false;
       for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].kg || d.sets[i].reps) { has = true; break; } }
@@ -429,12 +429,12 @@ function getHistory(db, ex) {
   }
   return out;
 }
-function getLastPerf(db, week, ex) {
+function getLastPerf(db, week, ex, dayIdx) {
   for (var w = week - 1; w >= 1; w--) {
-    var d = dbGet(db, w, ex);
-    if (d && d.sets) {
+    var entry = dbGet(db, w, ex, dayIdx);
+    if (entry && entry.sets) {
       var done = [];
-      for (var i = 0; i < d.sets.length; i++) { if (d.sets[i].kg || d.sets[i].reps) done.push(d.sets[i]); }
+      for (var i = 0; i < entry.sets.length; i++) { if (entry.sets[i].kg || entry.sets[i].reps) done.push(entry.sets[i]); }
       if (done.length) return {week:w, sets:done};
     }
   }
@@ -452,11 +452,11 @@ function g(id) { return document.getElementById(id); }
 
 function checkWeekComplete() {
   var db = dbLoad(); var wk = WEEKS[curWeek-1]; if (!wk) return;
-  var allEx = [];
-  var activeSplit = wk.days >= 4 ? SPLIT : SPLIT.slice(0,3);
-  for (var di = 0; di < activeSplit.length; di++) { for (var ei = 0; ei < activeSplit[di].ex.length; ei++) allEx.push(activeSplit[di].ex[ei]); }
-  if (!allEx.length) return;
-  if (!allEx.every(function(ex){ return getDone(db,curWeek,ex) >= wk.sets; })) return;
+  var allExDay = [];
+    var activeSplit = wk.days >= 4 ? SPLIT : SPLIT.slice(0,3);
+  for (var di = 0; di < activeSplit.length; di++) { for (var ei = 0; ei < activeSplit[di].ex.length; ei++) allExDay.push({ex: activeSplit[di].ex[ei], di: di}); }
+  if (!allExDay.length) return;
+  if (!allExDay.every(function(item){ return getDone(db, curWeek, item.ex, item.di) >= wk.sets; })) return;
   var ack = "glute12w_ack";
   try { if (localStorage.getItem(ack) === String(curWeek)) return; } catch(e) {}
   setTimeout(function() {
@@ -554,7 +554,7 @@ function renderWorkout() {
   var activeSplit = wk.days >= 4 ? SPLIT : SPLIT.slice(0, 3);
   var allEx = [];
   for (var di = 0; di < activeSplit.length; di++) { for (var ei = 0; ei < activeSplit[di].ex.length; ei++) allEx.push(activeSplit[di].ex[ei]); }
-  var weekDone = allEx.length > 0 && allEx.every(function(ex) { return getDone(db, curWeek, ex) >= wk.sets; });
+  var weekDone = allEx.length > 0 && allEx.every(function(ex) { return getDone(db, curWeek, ex, d) >= wk.sets; });
 
   var days = "";
   for (var d = 0; d < activeSplit.length; d++) {
@@ -562,9 +562,9 @@ function renderWorkout() {
     var rows = "";
     for (var e = 0; e < day.ex.length; e++) {
       var ex = day.ex[e];
-      var done = getDone(db, curWeek, ex);
+      var done = getDone(db, curWeek, ex, d);
       var isDone = done >= wk.sets;
-      var last = getLastPerf(db, curWeek, ex);
+      var last = getLastPerf(db, curWeek, ex, d);
       var lastStr = "No previous data";
       if (last && last.sets.length) {
         var maxKg = 0;
@@ -618,9 +618,9 @@ function openModal(safeEx, dayType, dayIdx) {
   var db = dbLoad();
   var wk = WEEKS[curWeek - 1];
   curNumSets = wk.sets;
-  var existing = dbGet(db, curWeek, ex);
-  var history  = getHistory(db, ex);
-  var last     = getLastPerf(db, curWeek, ex);
+  var existing = dbGet(db, curWeek, ex, curDayIdx);
+  var history  = getHistory(db, ex, curDayIdx);
+  var last     = getLastPerf(db, curWeek, ex, dayIdx);
   var suggestKg = 0;
   if (last && last.sets.length) {
     for (var s = 0; s < last.sets.length; s++) { if (last.sets[s].kg && +last.sets[s].kg > suggestKg) suggestKg = +last.sets[s].kg; }
@@ -719,7 +719,7 @@ function saveModalSilent() {
   }
   var now = new Date();
   var date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
-  dbSet(db, curWeek, ex, {sets: sets, date: date});
+  dbSet(db, curWeek, ex, {sets: sets, date: date}, curDayIdx);
   // Update bubble and quick-done-btn without full re-render
   var totalDone = sets.filter(function(s){ return s.done; }).length;
   var safeEx = encodeURIComponent(ex);
@@ -749,16 +749,17 @@ function saveModal() {
   }
   var now = new Date();
   var date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
-  dbSet(db, curWeek, ex, {sets:sets, date:date});
+  dbSet(db, curWeek, ex, {sets:sets, date:date}, curDayIdx);
   closeModal();
   renderWorkout();
 }
 
 function quickCompleteEx(safeEx, dayIdx, weekNum) {
   var ex = decodeURIComponent(safeEx);
+  var dIdx = dayIdx !== undefined ? dayIdx : curDayIdx;
   var db = dbLoad();
   var wk = WEEKS[curWeek - 1];
-  var existing = dbGet(db, curWeek, ex);
+  var existing = dbGet(db, curWeek, ex, dIdx);
   var now = new Date();
   var date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
 
@@ -767,7 +768,7 @@ function quickCompleteEx(safeEx, dayIdx, weekNum) {
                 existing.sets.every(function(s){ return s.done; });
 
   var sets = [];
-  var last = getLastPerf(db, curWeek, ex);
+  var last = getLastPerf(db, curWeek, ex, dIdx);
   for (var i = 0; i < wk.sets; i++) {
     var existSet = existing && existing.sets && existing.sets[i] ? existing.sets[i] : null;
     var lastSet  = last && last.sets && last.sets[i] ? last.sets[i] : null;
@@ -775,7 +776,7 @@ function quickCompleteEx(safeEx, dayIdx, weekNum) {
     var reps = existSet && existSet.reps ? existSet.reps : (lastSet && lastSet.reps ? lastSet.reps : wk.reps.split("-")[0]);
     sets.push({kg: kg, reps: reps, done: !allDone});
   }
-  dbSet(db, curWeek, ex, {sets: sets, date: date});
+  dbSet(db, curWeek, ex, {sets: sets, date: date}, dIdx);
   // Silent update - just flip the bubble and quick-done-btn without re-rendering
   var totalDone = sets.filter(function(s){ return s.done; }).length;
   var safeEx2 = encodeURIComponent(ex);
@@ -800,8 +801,8 @@ function markDayDone(dayIdx) {
   var date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
   for (var e = 0; e < day.ex.length; e++) {
     var ex = day.ex[e];
-    var existing = dbGet(db, curWeek, ex);
-    var last = getLastPerf(db, curWeek, ex);
+    var existing = dbGet(db, curWeek, ex, dayIdx);
+    var last = getLastPerf(db, curWeek, ex, dayIdx);
     var allDone = existing && existing.sets && existing.sets.every(function(s){ return s.done; });
     if (allDone) continue;
     var sets = [];
@@ -812,7 +813,7 @@ function markDayDone(dayIdx) {
       var reps = (existSet && existSet.reps) ? existSet.reps : (lastSet && lastSet.reps ? lastSet.reps : wk.reps.split("-")[0]);
       sets.push({kg: kg, reps: reps, done: true});
     }
-    dbSet(db, curWeek, ex, {sets: sets, date: date});
+    dbSet(db, curWeek, ex, {sets: sets, date: date}, dayIdx);
   }
   renderWorkout();
 }
