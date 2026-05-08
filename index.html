@@ -313,14 +313,6 @@ input[type=number] { -moz-appearance: textfield; }
 </div>
 <script>
 
-window.onerror = function(msg, src, line, col, err) {
-  var div = document.createElement("div");
-  div.style.cssText = "position:fixed;top:0;left:0;right:0;background:#ff0044;color:#fff;font-family:monospace;font-size:12px;padding:12px;z-index:9999;word-break:break-all;white-space:pre-wrap";
-  div.textContent = "ERROR: " + msg + "\nLine: " + line + " Col: " + col + "\nSrc: " + src + "\n" + (err ? err.stack : "");
-  document.body.appendChild(div);
-  return false;
-};
-
 var SPLIT = [
   {day:"A", type:"glute", label:"Glute Focus", sub:"Primary glute + hamstring session", ex:[
     "Barbell Hip Thrust","Smith Machine RDL","DB Bulgarian Split Squat","Cable Kickback","Abduction Machine","Leg Curl","Glute Bridge Pulse"
@@ -996,7 +988,7 @@ function renderProgress() {
     for (var d = 0; d < SPLIT.length; d++) {
       for (var e = 0; e < SPLIT[d].ex.length; e++) {
         var ex = SPLIT[d].ex[e];
-        var data = dbGet(db, w, ex);
+        var data = dbGet(db, w, ex, d);
         if (data && data.sets) {
           var hasDone = false;
           for (var si = 0; si < data.sets.length; si++) {
